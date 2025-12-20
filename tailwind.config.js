@@ -1,17 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    // 基础路径 - 适用于本地开发和大多数部署环境
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    // 支持绝对路径的父目录匹配 - 适用于云部署环境
-    "./*/index.html",
-    "./*/src/**/*.{js,ts,jsx,tsx}",
-    // 通配符匹配 - 适用于任意层级目录
-    "**/*.html",
-    "**/*.{js,ts,jsx,tsx}",
-    // 确保匹配所有可能的文件位置
-    "./*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
