@@ -6,9 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ToolHub - 多功能工具集合网站</title>
     <meta name="description" content="ToolHub - 一站式在线工具集合，包含JSON格式化、时间戳转换、编码解码等实用工具" />
+    <!-- 立即应用基础样式，防止空白 -->
+    <style>
+      body { margin: 0; background: #0f172a; color: #f8fafc; font-family: system-ui; }
+      #root { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="./src/main.tsx"></script>
+    <div id="root">加载中...</div>
+    <!-- 基础脚本引用，Vite会自动替换为构建后的正确路径 -->
+    <script type="module" crossorigin src="./src/main.tsx"></script>
   </body>
 </html>
