@@ -8,12 +8,13 @@
     <meta name="description" content="ToolHub - 一站式在线工具集合，包含JSON格式化、时间戳转换、编码解码等实用工具" />
     <!-- 立即应用基础样式，防止空白 -->
     <style>
-      body { margin: 0; background: #0f172a; color: #f8fafc; font-family: system-ui; }
-      #root { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+      body { margin: 0; background: #0f172a; color: #f8fafc; font-family: system-ui; padding: 20px; }
+      #root { min-height: 100vh; }
+      .loading { text-align: center; padding: 60px 20px; opacity: 0.6; }
     </style>
   </head>
   <body>
-    <div id="root">加载中...</div>
+    <div id="root"><div class="loading">正在加载 ToolHub...</div></div>
     <!-- 基础脚本引用，Vite会自动替换为构建后的正确路径 -->
     <script type="module" crossorigin src="./src/main.tsx"></script>
   </body>
