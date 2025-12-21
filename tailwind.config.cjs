@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
 // 核心修复：只保留精确的路径，去掉全局通配符
   content: [
     "./index.html",

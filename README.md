@@ -56,7 +56,7 @@ toolhub/
 │   └── main.tsx            # 主入口
 ├── public/                 # 静态资源
 ├── index.html              # HTML入口
-├── tailwind.config.js      # Tailwind配置
+├── tailwind.config.cjs      # Tailwind配置
 ├── vite.config.ts          # Vite配置
 └── package.json            # 项目配置
 ```
