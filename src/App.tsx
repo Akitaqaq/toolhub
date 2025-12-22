@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import JSONFormatter from './pages/JSONFormatter'
 import TimestampConverter from './pages/TimestampConverter'
 import EncoderDecoder from './pages/EncoderDecoder'
+import AESKeyGenerator from './pages/AESKeyGenerator'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="json" element={<JSONFormatter />} />
           <Route path="timestamp" element={<TimestampConverter />} />
           <Route path="encoder" element={<EncoderDecoder />} />
+          <Route path="aes" element={<AESKeyGenerator />} />
         </Route>
       </Routes>
     </Router>

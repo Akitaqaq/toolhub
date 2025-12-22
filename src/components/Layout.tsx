@@ -9,6 +9,7 @@ const Layout: React.FC = () => {
     { path: '/json', label: 'JSON格式化' },
     { path: '/timestamp', label: '时间戳转换' },
     { path: '/encoder', label: '编码解码' },
+    { path: '/aes', label: 'AES密钥' },
   ]
 
   return (

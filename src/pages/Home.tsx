@@ -25,11 +25,11 @@ const Home: React.FC = () => {
       gradient: 'bg-gradient-to-br from-pink-500 to-rose-600',
     },
     {
-      path: '/json',
-      title: '更多工具',
-      description: '持续更新中...',
-      icon: '🚀',
-      gradient: 'bg-gradient-to-br from-orange-500 to-amber-600',
+      path: '/aes',
+      title: 'AES密钥生成',
+      description: '生成安全的AES加密密钥',
+      icon: '🔑',
+      gradient: 'bg-gradient-to-br from-purple-500 to-indigo-600',
     },
   ]
 
@@ -73,18 +73,22 @@ const Home: React.FC = () => {
 
       {/* 统计信息 */}
       <div className="glass rounded-xl p-8 text-center">
-        <div className="grid grid-cols-3 gap-4 md:gap-8">
+        <div className="grid grid-cols-4 gap-3 md:gap-6">
           <div>
-            <div className="text-3xl font-bold gradient-text">100%</div>
-            <div className="text-slate-400 text-sm mt-1">本地处理</div>
+            <div className="text-2xl font-bold gradient-text">100%</div>
+            <div className="text-slate-400 text-xs mt-1">本地处理</div>
           </div>
           <div>
-            <div className="text-3xl font-bold gradient-text">🚀</div>
-            <div className="text-slate-400 text-sm mt-1">快速响应</div>
+            <div className="text-2xl font-bold gradient-text">🚀</div>
+            <div className="text-slate-400 text-xs mt-1">快速响应</div>
           </div>
           <div>
-            <div className="text-3xl font-bold gradient-text">🔒</div>
-            <div className="text-slate-400 text-sm mt-1">隐私安全</div>
+            <div className="text-2xl font-bold gradient-text">🔒</div>
+            <div className="text-slate-400 text-xs mt-1">隐私安全</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold gradient-text">🔐</div>
+            <div className="text-slate-400 text-xs mt-1">加密支持</div>
           </div>
         </div>
       </div>
