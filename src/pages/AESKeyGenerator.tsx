@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 type KeySize = 128 | 192 | 256
-type OutputFormat = 'hex' | 'base64' | 'raw'
+type OutputFormat = 'hex' | 'base64' | 'raw' | 'java_bytes' | 'java_string'
 
 interface AESKeyState {
   key: string
@@ -53,7 +53,7 @@ const AESKeyGenerator: React.FC = () => {
     const keyLength = state.keySize / 8
     let finalBytes = generateRandomBytes(keyLength)
 
-    // 如果需要多次迭代混合（增强随机性）
+    // 如果需要迭代次数大于1，进行XOR混合增强随机性
     if (state.iterations > 1) {
       for (let i = 1; i < state.iterations; i++) {
         const newBytes = generateRandomBytes(keyLength)
@@ -73,6 +73,15 @@ const AESKeyGenerator: React.FC = () => {
         break
       case 'raw':
         formattedKey = Array.from(finalBytes).join(', ')
+        break
+      case 'java_bytes':
+        // Java字节数组格式
+        formattedKey = 'new byte[] {' + Array.from(finalBytes).join(', ') + '}'
+        break
+      case 'java_string':
+        // Java字符串密钥格式 - 生成可打印的普通字符串
+        // 使用Base64编码，确保每个字符都是可打印的ASCII
+        formattedKey = bytesToBase64(finalBytes)
         break
     }
 
@@ -150,18 +159,18 @@ const AESKeyGenerator: React.FC = () => {
           {/* 输出格式选择 */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-300">输出格式</label>
-            <div className="flex gap-2">
-              {(['hex', 'base64', 'raw'] as OutputFormat[]).map((format) => (
+            <div className="grid grid-cols-2 gap-2">
+              {(['hex', 'base64', 'raw', 'java_string'] as OutputFormat[]).map((format) => (
                 <button
                   key={format}
                   onClick={() => setState(prev => ({ ...prev, format }))}
-                  className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`py-2 rounded-lg text-sm font-medium transition-all ${
                     state.format === format
                       ? 'bg-pink-500 text-white shadow-lg'
                       : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50'
                   }`}
                 >
-                  {format.toUpperCase()}
+                  {format === 'java_string' ? 'JAVA' : format.toUpperCase()}
                 </button>
               ))}
             </div>
@@ -169,6 +178,7 @@ const AESKeyGenerator: React.FC = () => {
               {state.format === 'hex' && '十六进制字符串，最常用'}
               {state.format === 'base64' && 'Base64编码，适合传输'}
               {state.format === 'raw' && '原始字节数组，适合调试'}
+              {state.format === 'java_string' && 'Base64字符串，Java专用格式'}
             </p>
           </div>
         </div>
@@ -307,25 +317,64 @@ const AESKeyGenerator: React.FC = () => {
         <ul className="space-y-2 text-slate-300 text-sm">
           <li className="flex items-start space-x-2">
             <span className="text-indigo-400">•</span>
-            <span>加密文件：推荐使用AES-256 + Hex格式</span>
+            <span><strong>Java加密：</strong>使用JAVA格式，生成的字符串可直接用于加密</span>
           </li>
           <li className="flex items-start space-x-2">
             <span className="text-indigo-400">•</span>
-            <span>数据库加密：推荐使用AES-192 + Base64格式</span>
+            <span><strong>加密文件：</strong>推荐使用AES-256 + Hex格式</span>
           </li>
           <li className="flex items-start space-x-2">
             <span className="text-indigo-400">•</span>
-            <span>网络传输：Base64格式更便于传输</span>
+            <span><strong>网络传输：</strong>Base64格式更便于传输</span>
           </li>
           <li className="flex items-start space-x-2">
             <span className="text-indigo-400">•</span>
-            <span>调试开发：Raw格式可查看原始字节值</span>
+            <span><strong>调试开发：</strong>Raw格式可查看原始字节值</span>
           </li>
           <li className="flex items-start space-x-2">
             <span className="text-indigo-400">•</span>
-            <span>混合次数：普通用途1次，高安全需求可2-3次</span>
+            <span><strong>密钥长度：</strong>256位提供最高安全性</span>
           </li>
         </ul>
+      </div>
+
+      {/* Java使用示例 */}
+      <div className="glass rounded-xl p-6 space-y-3">
+        <h3 className="text-lg font-semibold text-white border-b border-white/10 pb-2">
+          ☕ Java使用示例
+        </h3>
+        <div className="space-y-3 text-sm">
+          <div>
+            <p className="text-slate-300 mb-2"><strong>JAVA字符串格式（Base64）：</strong></p>
+            <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-3 font-mono text-xs text-green-400 overflow-x-auto">
+              <div>// 生成的密钥是可打印的Base64字符串</div>
+              <div>String base64Key = "生成的Base64字符串";</div>
+              <div>byte[] keyBytes = Base64.getDecoder().decode(base64Key);</div>
+              <div>SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");</div>
+              <div>Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");</div>
+              <div>cipher.init(Cipher.ENCRYPT_MODE, key);</div>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-slate-300 mb-2"><strong>完整加密示例：</strong></p>
+            <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-3 font-mono text-xs text-green-400 overflow-x-auto">
+              <div>import javax.crypto.Cipher;</div>
+              <div>import javax.crypto.spec.SecretKeySpec;</div>
+              <div>import java.nio.charset.StandardCharsets;</div>
+              <div></div>
+              <div>public class AESEncryption {'{'}</div>
+              <div>    public static byte[] encrypt(String data, String key) throws Exception {'{'}</div>
+              <div>        byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);</div>
+              <div>        SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "AES");</div>
+              <div>        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");</div>
+              <div>        cipher.init(Cipher.ENCRYPT_MODE, secretKey);</div>
+              <div>        return cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));</div>
+              <div>    {'}'}</div>
+              <div>{'}'}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

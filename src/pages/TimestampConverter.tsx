@@ -489,7 +489,7 @@ const TimestampConverter: React.FC<TimestampConverterProps> = () => {
                 ) : (
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-mono text-slate-300 space-y-0.5">
+                      <div className="text-base font-mono text-slate-300 space-y-0.5">
                         {item.result.split('\n').map((line, i) => (
                           <div key={i} className="leading-relaxed">{line}</div>
                         ))}
