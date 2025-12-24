@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 interface ConvertItem {
   id: string
@@ -15,11 +15,57 @@ const TimestampConverter: React.FC<TimestampConverterProps> = () => {
   const [items, setItems] = useState<ConvertItem[]>([
     { id: `item-${Date.now()}`, timestamp: '', datetime: '', result: '', error: '' }
   ])
+  const [isInitialized, setIsInitialized] = useState(false)
 
   const timezones = [
     'UTC', 'Asia/Shanghai', 'Asia/Tokyo', 'Asia/Singapore', 'America/New_York',
     'America/Los_Angeles', 'Europe/London', 'Europe/Paris', 'Australia/Sydney'
   ]
+
+  // 页面加载时自动填充当前时间
+  useEffect(() => {
+    if (!isInitialized) {
+      loadCurrentTime()
+      setIsInitialized(true)
+    }
+  }, [isInitialized])
+
+  // 加载当前时间到第一个输入组
+  const loadCurrentTime = () => {
+    const now = new Date()
+    const tsSec = Math.floor(now.getTime() / 1000)
+
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZone: timezone
+    }
+
+    const formatted = new Intl.DateTimeFormat('zh-CN', options).format(now)
+
+    // 自动转换并展示结果
+    const timestamp = tsSec.toString()
+    const datetime = formatted.replace(/\//g, '-')
+
+    // 创建带结果的初始项
+    const initialItem: ConvertItem = {
+      id: `item-${Date.now()}`,
+      timestamp: timestamp,
+      datetime: datetime,
+      result: '',
+      error: ''
+    }
+
+    // 自动转换时间戳
+    const convertedItem = convertTimestampToDateTime(initialItem)
+
+    setItems([convertedItem])
+  }
 
   // 添加新的输入组
   const addConvertItem = () => {
@@ -319,7 +365,10 @@ const TimestampConverter: React.FC<TimestampConverterProps> = () => {
     <div className="max-w-6xl mx-auto space-y-6 animate-fade-in">
       <div className="text-center space-y-2 mb-6">
         <h2 className="text-3xl md:text-4xl font-bold gradient-text">批量时间戳转换</h2>
-        <p className="text-slate-400">支持添加多个输入框，同时转换多个时间戳或日期</p>
+        <p className="text-slate-400">默认显示当前时间，支持批量转换多个时间戳或日期</p>
+        <div className="text-xs text-indigo-300 mt-2 bg-indigo-500/10 inline-block px-3 py-1 rounded-full border border-indigo-500/20">
+          🌟 已自动加载当前时间
+        </div>
       </div>
 
       {/* 统计信息 */}

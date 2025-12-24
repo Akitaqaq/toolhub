@@ -4,7 +4,9 @@
       "Bash(npm run build:*)",
       "Bash(timeout:*)",
       "Bash(npm run dev:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(Get-Content:*)",
+      "Bash(Select-Object -Skip 365 -First 5:*)"
     ]
   }
 }
