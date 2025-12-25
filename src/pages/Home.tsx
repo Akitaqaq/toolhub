@@ -31,6 +31,20 @@ const Home: React.FC = () => {
       icon: '🔑',
       gradient: 'bg-gradient-to-br from-purple-500 to-indigo-600',
     },
+    {
+      path: '/md5',
+      title: 'MD5加密',
+      description: '生成MD5哈希值，支持16/32位',
+      icon: '🔒',
+      gradient: 'bg-gradient-to-br from-orange-500 to-red-600',
+    },
+    {
+      path: '/theme',
+      title: '主题设置',
+      description: '自定义网站配色方案',
+      icon: '🎨',
+      gradient: 'bg-gradient-to-br from-yellow-500 to-pink-600',
+    },
   ]
 
   return (

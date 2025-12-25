@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { toast } from '../components/Toast'
 
 interface ConvertItem {
   id: string
@@ -82,7 +83,7 @@ const TimestampConverter: React.FC<TimestampConverterProps> = () => {
   // 删除指定输入组
   const removeItem = (id: string) => {
     if (items.length <= 1) {
-      alert('至少需要保留一个输入组')
+      toast.warning('至少需要保留一个输入组')
       return
     }
     setItems(prev => prev.filter(item => item.id !== id))
@@ -261,13 +262,13 @@ const TimestampConverter: React.FC<TimestampConverterProps> = () => {
     try {
       const text = await navigator.clipboard.readText()
       if (!text) {
-        alert('剪贴板为空')
+        toast.warning('剪贴板为空')
         return
       }
 
       const lines = text.split('\n').filter(line => line.trim() !== '')
       if (lines.length === 0) {
-        alert('剪贴板内容不包含有效文本')
+        toast.warning('剪贴板内容不包含有效文本')
         return
       }
 
@@ -287,9 +288,9 @@ const TimestampConverter: React.FC<TimestampConverterProps> = () => {
 
       setItems(prev => [...prev, ...newItems])
 
-      alert(`成功导入 ${newItems.length} 个输入项`)
+      toast.success(`成功导入 ${newItems.length} 个输入项`)
     } catch (err) {
-      alert('无法读取剪贴板，请确保授予相应权限')
+      toast.error('无法读取剪贴板，请确保授予相应权限')
     }
   }
 
@@ -313,7 +314,7 @@ const TimestampConverter: React.FC<TimestampConverterProps> = () => {
   const copySingleResult = (item: ConvertItem) => {
     if (item.result) {
       navigator.clipboard.writeText(item.result).then(() => {
-        alert('已复制到剪贴板！')
+        toast.success('已复制到剪贴板！')
       })
     }
   }
@@ -329,12 +330,12 @@ const TimestampConverter: React.FC<TimestampConverterProps> = () => {
       .join('\n\n')
 
     if (!results) {
-      alert('没有可复制的结果')
+      toast.warning('没有可复制的结果')
       return
     }
 
     navigator.clipboard.writeText(results).then(() => {
-      alert('所有结果已复制到剪贴板！')
+      toast.success('所有结果已复制到剪贴板！')
     })
   }
 
@@ -352,12 +353,12 @@ const TimestampConverter: React.FC<TimestampConverterProps> = () => {
       .join('\n')
 
     if (!results) {
-      alert('没有可导出的结果')
+      toast.warning('没有可导出的结果')
       return
     }
 
     navigator.clipboard.writeText(results).then(() => {
-      alert('对比结果已复制到剪贴板！')
+      toast.success('对比结果已复制到剪贴板！')
     })
   }
 

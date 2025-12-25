@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { toast } from '../components/Toast'
 
 type KeySize = 128 | 192 | 256
 
@@ -53,7 +54,7 @@ const AESKeyGenerator: React.FC = () => {
   const copyKeyString = () => {
     if (state.keyString) {
       navigator.clipboard.writeText(state.keyString)
-      alert('✅ 密钥字符串已复制！')
+      toast.success('密钥字符串已复制！')
     }
   }
 
@@ -63,7 +64,7 @@ const AESKeyGenerator: React.FC = () => {
       // Base64解码回字节数组
       const bytes = atob(state.keyString).split('').map(c => c.charCodeAt(0))
       navigator.clipboard.writeText('new byte[] {' + bytes.join(', ') + '}')
-      alert('✅ Java字节数组格式已复制！')
+      toast.success('Java字节数组格式已复制！')
     }
   }
 
@@ -74,7 +75,7 @@ const AESKeyGenerator: React.FC = () => {
       const bytes = atob(state.keyString).split('').map(c => c.charCodeAt(0))
       const hex = bytes.map(b => b.toString(16).padStart(2, '0')).join('')
       navigator.clipboard.writeText(hex)
-      alert('✅ Hex格式已复制！')
+      toast.success('Hex格式已复制！')
     }
   }
 
@@ -83,7 +84,7 @@ const AESKeyGenerator: React.FC = () => {
     if (state.keyString) {
       const bytes = atob(state.keyString).split('').map(c => c.charCodeAt(0))
       navigator.clipboard.writeText(bytes.join(', '))
-      alert('✅ 原始字节已复制！')
+      toast.success('原始字节已复制！')
     }
   }
 

@@ -6,7 +6,10 @@
       "Bash(npm run dev:*)",
       "Bash(npx tsc:*)",
       "Bash(Get-Content:*)",
-      "Bash(Select-Object -Skip 365 -First 5:*)"
+      "Bash(Select-Object -Skip 365 -First 5:*)",
+      "Bash(npm install:*)",
+      "Bash(node:*)",
+      "Bash(cat:*)"
     ]
   }
 }

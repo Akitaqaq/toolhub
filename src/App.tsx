@@ -5,20 +5,28 @@ import JSONFormatter from './pages/JSONFormatter'
 import TimestampConverter from './pages/TimestampConverter'
 import EncoderDecoder from './pages/EncoderDecoder'
 import AESKeyGenerator from './pages/AESKeyGenerator'
+import MD5Encryptor from './pages/MD5Encryptor'
+import ThemeCustomizer from './pages/ThemeCustomizer'
+import { ToastProvider, ToastEventBridge } from './components/Toast'
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="json" element={<JSONFormatter />} />
-          <Route path="timestamp" element={<TimestampConverter />} />
-          <Route path="encoder" element={<EncoderDecoder />} />
-          <Route path="aes" element={<AESKeyGenerator />} />
-        </Route>
-      </Routes>
-    </Router>
+    <ToastProvider>
+      <Router>
+        <ToastEventBridge />
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="json" element={<JSONFormatter />} />
+            <Route path="timestamp" element={<TimestampConverter />} />
+            <Route path="encoder" element={<EncoderDecoder />} />
+            <Route path="aes" element={<AESKeyGenerator />} />
+            <Route path="md5" element={<MD5Encryptor />} />
+            <Route path="theme" element={<ThemeCustomizer />} />
+          </Route>
+        </Routes>
+      </Router>
+    </ToastProvider>
   )
 }
 

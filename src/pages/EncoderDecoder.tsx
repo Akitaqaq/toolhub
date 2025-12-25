@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { toast } from '../components/Toast'
 
 type EncodeType = 'url' | 'base64' | 'unicode'
 
@@ -84,7 +85,7 @@ const EncoderDecoder: React.FC = () => {
   const handleCopy = () => {
     if (state.output) {
       navigator.clipboard.writeText(state.output)
-      alert('已复制到剪贴板！')
+      toast.success('已复制到剪贴板！')
     }
   }
 
@@ -255,7 +256,7 @@ const EncoderDecoder: React.FC = () => {
         <button
           onClick={() => {
             navigator.clipboard.writeText(state.input + state.output)
-            alert('输入+输出已合并复制！')
+            toast.success('输入+输出已合并复制！')
           }}
           className="px-3 py-2 bg-slate-700/50 hover:bg-slate-600/50 rounded text-xs text-slate-300 transition-colors border border-slate-600/50"
         >
@@ -265,7 +266,7 @@ const EncoderDecoder: React.FC = () => {
           onClick={() => {
             const inputLen = state.input.length
             const outputLen = state.output.length
-            alert(`输入长度: ${inputLen}\n输出长度: ${outputLen}\n字符数变化: ${outputLen - inputLen}`)
+            toast.info(`输入: ${inputLen}字符, 输出: ${outputLen}字符, 变化: ${outputLen - inputLen}`)
           }}
           className="px-3 py-2 bg-slate-700/50 hover:bg-slate-600/50 rounded text-xs text-slate-300 transition-colors border border-slate-600/50"
         >

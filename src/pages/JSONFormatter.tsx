@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 import JSONSyntaxHighlight from '../components/JSONSyntaxHighlight'
+import CollapsibleJSONTree from '../components/CollapsibleJSONTree'
+import { toast } from '../components/Toast'
 
 interface JSONState {
   input: string
   output: string
   error: string
   indent: 2 | 4 | 8
+  viewMode: 'highlight' | 'tree'
 }
 
 const JSONFormatter: React.FC = () => {
@@ -14,6 +17,7 @@ const JSONFormatter: React.FC = () => {
     output: '',
     error: '',
     indent: 2,
+    viewMode: 'tree',
   })
 
   const handleFormat = () => {
@@ -47,11 +51,15 @@ const JSONFormatter: React.FC = () => {
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
-    alert('已复制到剪贴板！')
+    toast.success('已复制到剪贴板！')
   }
 
   const handleClear = () => {
-    setState({ input: '', output: '', error: '', indent: 2 })
+    setState({ input: '', output: '', error: '', indent: 2, viewMode: state.viewMode })
+  }
+
+  const toggleViewMode = () => {
+    setState(prev => ({ ...prev, viewMode: prev.viewMode === 'tree' ? 'highlight' : 'tree' }))
   }
 
   const handleIndentChange = (value: string) => {
@@ -121,16 +129,30 @@ const JSONFormatter: React.FC = () => {
 
         {/* 输出区域 */}
         <div className="glass rounded-xl p-4 space-y-3 flex flex-col">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <label className="text-lg font-semibold text-white">输出结果</label>
-            {state.output && (
-              <button
-                onClick={() => handleCopy(state.output)}
-                className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20 text-sm transition-colors"
-              >
-                复制
-              </button>
-            )}
+            <div className="flex gap-2 items-center">
+              {state.output && (
+                <button
+                  onClick={() => handleCopy(state.output)}
+                  className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20 text-sm transition-colors"
+                >
+                  复制
+                </button>
+              )}
+              {state.output && (
+                <button
+                  onClick={toggleViewMode}
+                  className={`px-3 py-1 rounded text-sm transition-colors border ${
+                    state.viewMode === 'tree'
+                      ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/30'
+                      : 'bg-purple-500/20 text-purple-300 border-purple-500/30 hover:bg-purple-500/30'
+                  }`}
+                >
+                  {state.viewMode === 'tree' ? '📋 树形视图' : '🔍 高亮视图'}
+                </button>
+              )}
+            </div>
           </div>
 
           {state.error && (
@@ -144,11 +166,19 @@ const JSONFormatter: React.FC = () => {
           )}
 
           <div className="w-full min-h-[24rem] lg:min-h-[32rem] h-auto glass-code rounded-lg p-3 overflow-auto">
-            <JSONSyntaxHighlight
-              json={state.output}
-              className="min-h-[22rem] lg:min-h-[30rem] json-highlight"
-            />
-            {!state.output && (
+            {state.output ? (
+              state.viewMode === 'tree' ? (
+                <CollapsibleJSONTree
+                  data={JSON.parse(state.output)}
+                  className="min-h-[22rem] lg:min-h-[30rem]"
+                />
+              ) : (
+                <JSONSyntaxHighlight
+                  json={state.output}
+                  className="min-h-[22rem] lg:min-h-[30rem] json-highlight"
+                />
+              )
+            ) : (
               <div className="text-slate-500 text-sm opacity-60">格式化后的结果将显示在这里...</div>
             )}
           </div>
@@ -179,10 +209,12 @@ const JSONFormatter: React.FC = () => {
       <div className="glass rounded-xl p-4 text-sm text-slate-300">
         <h3 className="font-semibold text-white mb-2">功能说明</h3>
         <ul className="space-y-1 opacity-80">
-          <li>• 格式化：美化压缩的JSON，添加缩进和换行</li>
-          <li>• 压缩：将格式化的JSON去除所有空白字符</li>
-          <li>• 验证：检查JSON语法是否正确</li>
-          <li>• 所有处理均在浏览器本地完成，数据安全</li>
+          <li>• <strong>格式化</strong>：美化压缩的JSON，添加缩进和换行</li>
+          <li>• <strong>压缩</strong>：将格式化的JSON去除所有空白字符</li>
+          <li>• <strong>验证</strong>：检查JSON语法是否正确</li>
+          <li>• <strong>树形视图</strong>：可折叠的JSON结构，数组显示元素数量 [x项]，对象显示字段数量 {`{x个字段}`}</li>
+          <li>• <strong>视图切换</strong>：支持树形视图和语法高亮视图自由切换</li>
+          <li>• <strong>本地处理</strong>：所有操作在浏览器本地完成，数据安全</li>
         </ul>
       </div>
     </div>
