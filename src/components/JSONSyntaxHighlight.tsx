@@ -41,7 +41,6 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
 
       const lineData: LineData[] = []
 
-      const stack: Array<{ type: 'object' | 'array'; level: number; path: string; childIndex: number }> = []
       let path = 'root'
 
       // 通过递归解析原始JSON来统计每个容器的字段/元素数量
@@ -67,11 +66,39 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
 
       countItemsRecursive(parsed, 'root')
 
+      // 构建路径映射：key = 行内容（简化）, value = 完整路径
+      // 用于匹配行内容到正确的路径
+      const buildPathMap = (obj: any, currentPath: string, pathMap: Map<string, string>, prefix = '') => {
+        if (obj === null || obj === undefined) return
+
+        if (Array.isArray(obj)) {
+          obj.forEach((item, index) => {
+            const childPath = `${currentPath}.arr_${index}`
+            // 数组元素没有键名，使用索引作为标识
+            pathMap.set(`${prefix}[${index}]`, childPath)
+            buildPathMap(item, childPath, pathMap, prefix + `  `)
+          })
+        } else if (typeof obj === 'object') {
+          Object.keys(obj).forEach((key, index) => {
+            const childPath = `${currentPath}.obj_${index}`
+            // 记录键名到路径的映射
+            pathMap.set(`${prefix}"${key}"`, childPath)
+            buildPathMap(obj[key], childPath, pathMap, prefix + `  `)
+          })
+        }
+      }
+
+      const pathMap = new Map<string, string>()
+      buildPathMap(parsed, 'root', pathMap)
+
+      // 使用栈跟踪当前上下文
+      const stackWithKeys: Array<{ type: 'object' | 'array'; path: string; obj: any; keyIndex: number }> = []
+
       lines.forEach((line, index) => {
         const lineNumber = index + 1
         const indent = line.match(/^\s*/)?.[0].length || 0
         const trimmed = line.trim()
-        const level = stack.length
+        const level = stackWithKeys.length
 
         let type: 'object' | 'array' | 'object-end' | 'array-end' | 'normal' = 'normal'
         let hasFoldableContent = false
@@ -81,67 +108,107 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
         if (trimmed === '{') {
           type = 'object'
           hasFoldableContent = true
-          if (stack.length === 0 && path === 'root') {
+          if (stackWithKeys.length === 0 && path === 'root') {
             currentPath = 'root'
+            stackWithKeys.push({ type: 'object', path: currentPath, obj: parsed, keyIndex: 0 })
           } else {
-            const parentContainer = stack[stack.length - 1]
-            const childIndex = parentContainer.childIndex++
+            const parentContainer = stackWithKeys[stackWithKeys.length - 1]
+            const parentObj = parentContainer.obj
+            const currentKeyIndex = parentContainer.keyIndex
             const prefix = parentContainer.type === 'object' ? 'obj' : 'arr'
-            currentPath = `${path}.${prefix}_${childIndex}`
+            const childPath = `${parentContainer.path}.${prefix}_${currentKeyIndex}`
+
+            currentPath = childPath
+            parentContainer.keyIndex++
+
+            const keys = Object.keys(parentObj)
+            const childObj = parentObj[keys[currentKeyIndex]]
+            stackWithKeys.push({ type: 'object', path: currentPath, obj: childObj, keyIndex: 0 })
           }
-          stack.push({ type: 'object', level, path: currentPath, childIndex: 0 })
           path = currentPath
         } else if (trimmed === '[') {
           type = 'array'
           hasFoldableContent = true
-          if (stack.length === 0 && path === 'root') {
+          if (stackWithKeys.length === 0 && path === 'root') {
             currentPath = 'root'
+            stackWithKeys.push({ type: 'array', path: currentPath, obj: parsed, keyIndex: 0 })
           } else {
-            const parentContainer = stack[stack.length - 1]
-            const childIndex = parentContainer.childIndex++
+            const parentContainer = stackWithKeys[stackWithKeys.length - 1]
+            const parentObj = parentContainer.obj
+            const currentKeyIndex = parentContainer.keyIndex
             const prefix = parentContainer.type === 'object' ? 'obj' : 'arr'
-            currentPath = `${path}.${prefix}_${childIndex}`
+            const childPath = `${parentContainer.path}.${prefix}_${currentKeyIndex}`
+
+            currentPath = childPath
+            parentContainer.keyIndex++
+
+            const keys = Object.keys(parentObj)
+            const childObj = parentObj[keys[currentKeyIndex]]
+            stackWithKeys.push({ type: 'array', path: currentPath, obj: childObj, keyIndex: 0 })
           }
-          stack.push({ type: 'array', level, path: currentPath, childIndex: 0 })
           path = currentPath
         } else if (trimmed === '}' || trimmed === '},') {
           type = 'object-end'
-          const last = stack.pop()
+          stackWithKeys.pop()
           currentPath = path
-          if (last) {
+          if (path !== 'root') {
             const parts = path.split('.')
             parts.pop()
             path = parts.join('.') || 'root'
           }
         } else if (trimmed === ']' || trimmed === '],') {
           type = 'array-end'
-          const last = stack.pop()
+          stackWithKeys.pop()
           currentPath = path
-          if (last) {
+          if (path !== 'root') {
             const parts = path.split('.')
             parts.pop()
             path = parts.join('.') || 'root'
           }
         } else if (trimmed.endsWith('[')) {
-          // Line like: "users": [
+          // Line like: "skills": [
           type = 'array'
           hasFoldableContent = true
-          const parentContainer = stack[stack.length - 1]
-          const childIndex = parentContainer.childIndex++
-          const prefix = parentContainer.type === 'object' ? 'obj' : 'arr'
-          currentPath = `${path}.${prefix}_${childIndex}`
-          stack.push({ type: 'array', level, path: currentPath, childIndex: 0 })
-          path = currentPath
+
+          // 提取键名
+          const keyMatch = trimmed.match(/^"([^"]+)":/)
+          if (keyMatch && stackWithKeys.length > 0) {
+            const keyName = keyMatch[1]
+            const parentContainer = stackWithKeys[stackWithKeys.length - 1]
+            const parentObj = parentContainer.obj
+            const keys = Object.keys(parentObj)
+            const keyIndex = keys.indexOf(keyName)
+
+            if (keyIndex !== -1) {
+              currentPath = `${parentContainer.path}.obj_${keyIndex}`
+              const childObj = parentObj[keyName]
+              stackWithKeys.push({ type: 'array', path: currentPath, obj: childObj, keyIndex: 0 })
+              parentContainer.keyIndex = keyIndex + 1  // 更新父容器的索引
+              path = currentPath
+            }
+          }
         } else if (trimmed.endsWith('{')) {
           // Line like: "nested": {
           type = 'object'
           hasFoldableContent = true
-          const parentContainer = stack[stack.length - 1]
-          const childIndex = parentContainer.childIndex++
-          const prefix = parentContainer.type === 'object' ? 'obj' : 'arr'
-          currentPath = `${path}.${prefix}_${childIndex}`
-          stack.push({ type: 'object', level, path: currentPath, childIndex: 0 })
-          path = currentPath
+
+          // 提取键名
+          const keyMatch = trimmed.match(/^"([^"]+)":/)
+          if (keyMatch && stackWithKeys.length > 0) {
+            const keyName = keyMatch[1]
+            const parentContainer = stackWithKeys[stackWithKeys.length - 1]
+            const parentObj = parentContainer.obj
+            const keys = Object.keys(parentObj)
+            const keyIndex = keys.indexOf(keyName)
+
+            if (keyIndex !== -1) {
+              currentPath = `${parentContainer.path}.obj_${keyIndex}`
+              const childObj = parentObj[keyName]
+              stackWithKeys.push({ type: 'object', path: currentPath, obj: childObj, keyIndex: 0 })
+              parentContainer.keyIndex = keyIndex + 1
+              path = currentPath
+            }
+          }
         } else {
           currentPath = path
         }
