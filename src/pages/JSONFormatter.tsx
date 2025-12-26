@@ -214,6 +214,7 @@ const JSONFormatter: React.FC = () => {
           <li>• <strong>验证</strong>：检查JSON语法是否正确</li>
           <li>• <strong>树形视图</strong>：可折叠的JSON结构，数组显示元素数量 [x项]，对象显示字段数量 {`{x个字段}`}</li>
           <li>• <strong>视图切换</strong>：支持树形视图和语法高亮视图自由切换</li>
+          <li>• <strong>行号显示</strong>：高亮视图自动显示行号，方便代码定位和调试</li>
           <li>• <strong>本地处理</strong>：所有操作在浏览器本地完成，数据安全</li>
         </ul>
       </div>
