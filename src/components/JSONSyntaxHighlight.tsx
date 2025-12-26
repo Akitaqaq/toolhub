@@ -9,6 +9,17 @@ interface CollapsibleState {
   [key: string]: boolean
 }
 
+interface LineData {
+  content: string
+  lineNumber: number
+  indent: number
+  level: number
+  path: string
+  type: 'object' | 'array' | 'object-end' | 'array-end' | 'normal'
+  hasFoldableContent: boolean
+  itemCount?: number
+}
+
 const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, className = '' }) => {
   if (!json) return null
 
@@ -28,18 +39,33 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
       const formatted = JSON.stringify(parsed, null, 2)
       const lines = formatted.split('\n')
 
-      const lineData: Array<{
-        content: string
-        lineNumber: number
-        indent: number
-        level: number
-        path: string
-        type: 'object' | 'array' | 'object-end' | 'array-end' | 'normal'
-        hasFoldableContent: boolean
-      }> = []
+      const lineData: LineData[] = []
 
-      const stack: Array<{ type: 'object' | 'array'; level: number }> = []
+      const stack: Array<{ type: 'object' | 'array'; level: number; path: string; childIndex: number }> = []
       let path = 'root'
+
+      // 通过递归解析原始JSON来统计每个容器的字段/元素数量
+      const itemCounts: { [key: string]: number } = {}
+
+      const countItemsRecursive = (obj: any, currentPath: string) => {
+        if (obj === null || obj === undefined) return
+
+        if (Array.isArray(obj)) {
+          itemCounts[currentPath] = obj.length
+          obj.forEach((item, index) => {
+            const childPath = `${currentPath}.arr_${index}`
+            countItemsRecursive(item, childPath)
+          })
+        } else if (typeof obj === 'object') {
+          itemCounts[currentPath] = Object.keys(obj).length
+          Object.keys(obj).forEach((key, index) => {
+            const childPath = `${currentPath}.obj_${index}`
+            countItemsRecursive(obj[key], childPath)
+          })
+        }
+      }
+
+      countItemsRecursive(parsed, 'root')
 
       lines.forEach((line, index) => {
         const lineNumber = index + 1
@@ -51,38 +77,71 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
         let hasFoldableContent = false
         let currentPath = path
 
+        // Check for opening braces/brackets
         if (trimmed === '{') {
           type = 'object'
           hasFoldableContent = true
-          stack.push({ type: 'object', level })
-          currentPath = `${path}.obj_${index}`
+          if (stack.length === 0 && path === 'root') {
+            currentPath = 'root'
+          } else {
+            const parentContainer = stack[stack.length - 1]
+            const childIndex = parentContainer.childIndex++
+            const prefix = parentContainer.type === 'object' ? 'obj' : 'arr'
+            currentPath = `${path}.${prefix}_${childIndex}`
+          }
+          stack.push({ type: 'object', level, path: currentPath, childIndex: 0 })
           path = currentPath
         } else if (trimmed === '[') {
           type = 'array'
           hasFoldableContent = true
-          stack.push({ type: 'array', level })
-          currentPath = `${path}.arr_${index}`
+          if (stack.length === 0 && path === 'root') {
+            currentPath = 'root'
+          } else {
+            const parentContainer = stack[stack.length - 1]
+            const childIndex = parentContainer.childIndex++
+            const prefix = parentContainer.type === 'object' ? 'obj' : 'arr'
+            currentPath = `${path}.${prefix}_${childIndex}`
+          }
+          stack.push({ type: 'array', level, path: currentPath, childIndex: 0 })
           path = currentPath
-        } else if (trimmed === '}') {
+        } else if (trimmed === '}' || trimmed === '},') {
           type = 'object-end'
           const last = stack.pop()
-          // 结束标记的 path 设置为它关闭的容器的 path
           currentPath = path
           if (last) {
             const parts = path.split('.')
             parts.pop()
             path = parts.join('.') || 'root'
           }
-        } else if (trimmed === ']') {
+        } else if (trimmed === ']' || trimmed === '],') {
           type = 'array-end'
           const last = stack.pop()
-          // 结束标记的 path 设置为它关闭的容器的 path
           currentPath = path
           if (last) {
             const parts = path.split('.')
             parts.pop()
             path = parts.join('.') || 'root'
           }
+        } else if (trimmed.endsWith('[')) {
+          // Line like: "users": [
+          type = 'array'
+          hasFoldableContent = true
+          const parentContainer = stack[stack.length - 1]
+          const childIndex = parentContainer.childIndex++
+          const prefix = parentContainer.type === 'object' ? 'obj' : 'arr'
+          currentPath = `${path}.${prefix}_${childIndex}`
+          stack.push({ type: 'array', level, path: currentPath, childIndex: 0 })
+          path = currentPath
+        } else if (trimmed.endsWith('{')) {
+          // Line like: "nested": {
+          type = 'object'
+          hasFoldableContent = true
+          const parentContainer = stack[stack.length - 1]
+          const childIndex = parentContainer.childIndex++
+          const prefix = parentContainer.type === 'object' ? 'obj' : 'arr'
+          currentPath = `${path}.${prefix}_${childIndex}`
+          stack.push({ type: 'object', level, path: currentPath, childIndex: 0 })
+          path = currentPath
         } else {
           currentPath = path
         }
@@ -98,7 +157,16 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
         })
       })
 
-      return lineData
+      // 将数量信息添加到对应的开始行
+      return lineData.map(line => {
+        if (line.type === 'object' || line.type === 'array') {
+          return {
+            ...line,
+            itemCount: itemCounts[line.path]
+          }
+        }
+        return line
+      })
     } catch (e) {
       const lines = json.split('\n')
       return lines.map((line, index) => ({
@@ -114,11 +182,9 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
   }
 
   // 检查行是否应该显示（未被折叠）
-  // 折叠逻辑：当折叠某个对象/数组时，隐藏其所有子行和结束标记，但保留折叠标记行
   const shouldShowLine = (line: any): boolean => {
     const linePathParts = line.path.split('.')
 
-    // 检查当前行或其祖先是否被折叠
     // 检查所有祖先路径（不包括当前路径本身）
     for (let i = linePathParts.length - 1; i > 0; i--) {
       const ancestorPath = linePathParts.slice(0, i).join('.')
@@ -135,14 +201,12 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
     return true
   }
 
-  // 语法高亮单行内容 - 完整的颜色支持 + 缩进保留
+  // 语法高亮单行内容
   const highlightLine = (line: string): React.ReactNode => {
-    // 先提取缩进部分
     const indentMatch = line.match(/^(\s*)/)
     const indent = indentMatch ? indentMatch[1] : ''
     const content = line.substring(indent.length)
 
-    // 正确的正则表达式 - 匹配JSON中的各种元素
     const regex = /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?|[{}\[\],])/g
 
     const parts: React.ReactNode[] = []
@@ -188,7 +252,6 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
       parts.push(<span key={`text-end-${lastIndex}`}>{content.substring(lastIndex)}</span>)
     }
 
-    // 组合缩进和高亮内容
     return (
       <>
         {indent && <span className="whitespace-pre">{indent}</span>}
@@ -252,7 +315,9 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
                 <div key={line.lineNumber} className="leading-relaxed px-3" style={{ height: '1.75rem' }}>
                   {isCollapsed && isFoldableStart ? (
                     <span className="text-orange-400 font-bold">
-                      {line.content.trim().startsWith('{') ? '{...}' : '[...]'}
+                      {line.type === 'object'
+                        ? `{...${line.itemCount || 0}个字段}`
+                        : `[...${line.itemCount || 0}项]`}
                     </span>
                   ) : (
                     highlightLine(line.content)
