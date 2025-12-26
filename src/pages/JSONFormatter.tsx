@@ -17,7 +17,7 @@ const JSONFormatter: React.FC = () => {
     output: '',
     error: '',
     indent: 2,
-    viewMode: 'tree',
+    viewMode: 'highlight',
   })
 
   const handleFormat = () => {
@@ -100,7 +100,7 @@ const JSONFormatter: React.FC = () => {
             value={state.input}
             onChange={(e) => setState(prev => ({ ...prev, input: e.target.value }))}
             placeholder="在此粘贴JSON数据..."
-            className="w-full h-[18rem] lg:h-[20rem] bg-slate-900/50 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-200 focus:outline-none input-glow transition-all"
+            className="w-full h-[22rem] lg:h-[30rem] bg-slate-900/50 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-200 focus:outline-none input-glow transition-all"
             spellCheck={false}
           />
 
@@ -144,12 +144,12 @@ const JSONFormatter: React.FC = () => {
                 <button
                   onClick={toggleViewMode}
                   className={`px-3 py-1 rounded text-sm transition-colors border ${
-                    state.viewMode === 'tree'
+                    state.viewMode === 'highlight'
                       ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/30'
                       : 'bg-purple-500/20 text-purple-300 border-purple-500/30 hover:bg-purple-500/30'
                   }`}
                 >
-                  {state.viewMode === 'tree' ? '📋 树形视图' : '🔍 高亮视图'}
+                  {state.viewMode === 'highlight' ? '🔍 高亮视图' : '📋 树形视图'}
                 </button>
               )}
             </div>
@@ -165,17 +165,17 @@ const JSONFormatter: React.FC = () => {
             </div>
           )}
 
-          <div className="w-full min-h-[24rem] lg:min-h-[32rem] h-auto glass-code rounded-lg p-3 overflow-auto">
+          <div className="w-full h-[22rem] lg:h-[30rem] glass-code rounded-lg p-3 overflow-auto">
             {state.output ? (
               state.viewMode === 'tree' ? (
                 <CollapsibleJSONTree
                   data={JSON.parse(state.output)}
-                  className="min-h-[22rem] lg:min-h-[30rem]"
+                  className="h-full"
                 />
               ) : (
                 <JSONSyntaxHighlight
                   json={state.output}
-                  className="min-h-[22rem] lg:min-h-[30rem] json-highlight"
+                  className="h-full json-highlight"
                 />
               )
             ) : (
