@@ -365,7 +365,7 @@ const JSONPath: React.FC = () => {
           </div>
 
           {/* 输入区域 - 根据模式显示编辑器或预览 */}
-          <div className="w-full h-[18rem] relative">
+          <div className="w-full h-[22rem] relative">
             {jsonDisplayMode === 'preview' ? (
               <div className="w-full h-full glass-code rounded-lg p-3 overflow-auto border border-blue-500/30 relative group">
                 <JSONSyntaxHighlight
@@ -567,7 +567,7 @@ const JSONPath: React.FC = () => {
             )}
           </div>
 
-          <div className="w-full h-[18rem] glass-code rounded-lg p-3 overflow-auto relative">
+          <div className="w-full h-[22rem] glass-code rounded-lg p-3 overflow-auto relative">
             {state.queryResult ? (
               <JSONSyntaxHighlight
                 json={state.queryResult}
@@ -578,45 +578,6 @@ const JSONPath: React.FC = () => {
                 查询结果将显示在这里...
               </div>
             )}
-          </div>
-
-          {/* 路径语法帮助 */}
-          <div className="space-y-2 pt-2 border-t border-white/10">
-            <div className="text-xs text-slate-400 font-medium">jsonpath语法说明:</div>
-            <div className="text-xs text-slate-300 space-y-1 opacity-80">
-              <div className="flex justify-between">
-                <span>$</span>
-                <span className="text-slate-500">根对象</span>
-              </div>
-              <div className="flex justify-between">
-                <span>$.key</span>
-                <span className="text-slate-500">子节点</span>
-              </div>
-              <div className="flex justify-between">
-                <span>$..key</span>
-                <span className="text-slate-500">递归后代</span>
-              </div>
-              <div className="flex justify-between">
-                <span>$.*</span>
-                <span className="text-slate-500">通配符</span>
-              </div>
-              <div className="flex justify-between">
-                <span>$[0]</span>
-                <span className="text-slate-500">数组下标</span>
-              </div>
-              <div className="flex justify-between">
-                <span>$[start:end:step]</span>
-                <span className="text-slate-500">数组切片</span>
-              </div>
-              <div className="flex justify-between">
-                <span>$[0,1]</span>
-                <span className="text-slate-500">联合操作</span>
-              </div>
-              <div className="flex justify-between">
-                <span>$[?(@.price {`>`} 100)]</span>
-                <span className="text-slate-500">过滤表达式</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
