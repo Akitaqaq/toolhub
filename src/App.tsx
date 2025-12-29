@@ -7,6 +7,7 @@ import EncoderDecoder from './pages/EncoderDecoder'
 import AESKeyGenerator from './pages/AESKeyGenerator'
 import MD5Encryptor from './pages/MD5Encryptor'
 import ThemeCustomizer from './pages/ThemeCustomizer'
+import JSONPath from './pages/JSONPath'
 import { ToastProvider, ToastEventBridge } from './components/Toast'
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="json" element={<JSONFormatter />} />
+            <Route path="jsonpath" element={<JSONPath />} />
             <Route path="timestamp" element={<TimestampConverter />} />
             <Route path="encoder" element={<EncoderDecoder />} />
             <Route path="aes" element={<AESKeyGenerator />} />

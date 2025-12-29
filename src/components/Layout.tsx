@@ -30,6 +30,7 @@ const Layout: React.FC = () => {
   const navItems = [
     { path: '/', label: '首页' },
     { path: '/json', label: 'JSON格式化' },
+    { path: '/jsonpath', label: 'JSONPath查询' },
     { path: '/timestamp', label: '时间戳转换' },
     { path: '/encoder', label: '编码解码' },
     { path: '/aes', label: 'AES密钥' },

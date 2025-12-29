@@ -11,6 +11,13 @@ const Home: React.FC = () => {
       gradient: 'bg-gradient-to-br from-blue-500 to-purple-600',
     },
     {
+      path: '/jsonpath',
+      title: 'JSONPath查询',
+      description: '强大的JSON数据查询和提取工具',
+      icon: '🔍',
+      gradient: 'bg-gradient-to-br from-cyan-500 to-blue-600',
+    },
+    {
       path: '/timestamp',
       title: '时间戳转换',
       description: '时间戳与日期格式互转',

@@ -11,7 +11,13 @@
       "Bash(node:*)",
       "Bash(cat:*)",
       "Bash(grep:*)",
-      "Bash(del:*)"
+      "Bash(del:*)",
+      "mcp__chrome-devtools__new_page",
+      "mcp__chrome-devtools__wait_for",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__navigate_page",
+      "Bash(npx jsonpath --help:*)",
+      "mcp__chrome-devtools__take_snapshot"
     ]
   }
 }
