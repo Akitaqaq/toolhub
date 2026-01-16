@@ -20,9 +20,40 @@ const JSONFormatter: React.FC = () => {
     viewMode: 'highlight',
   })
 
+  /**
+   * 智能解析JSON，支持转义字符串形式的JSON
+   * 例如: "{\n  \"name\": \"test\"}" 可以正确解析
+   */
+  const smartParseJSON = (input: string): unknown => {
+    const trimmed = input.trim()
+
+    try {
+      // 第一次尝试：直接解析
+      const result = JSON.parse(trimmed)
+
+      // 如果解析结果是字符串，且看起来像JSON，尝试再次解析
+      if (typeof result === 'string' && result.length > 0) {
+        const trimmedResult = result.trim()
+        // 检查是否以 { 或 [ 开头（常见JSON开头）
+        if (trimmedResult.startsWith('{') || trimmedResult.startsWith('[')) {
+          try {
+            return JSON.parse(result)
+          } catch {
+            // 如果二次解析失败，返回原始字符串
+            return result
+          }
+        }
+      }
+
+      return result
+    } catch (err) {
+      throw err
+    }
+  }
+
   const handleFormat = () => {
     try {
-      const parsed = JSON.parse(state.input)
+      const parsed = smartParseJSON(state.input)
       const formatted = JSON.stringify(parsed, null, state.indent)
       setState(prev => ({ ...prev, output: formatted, error: '' }))
     } catch (err) {
@@ -32,7 +63,7 @@ const JSONFormatter: React.FC = () => {
 
   const handleMinify = () => {
     try {
-      const parsed = JSON.parse(state.input)
+      const parsed = smartParseJSON(state.input)
       const minified = JSON.stringify(parsed)
       setState(prev => ({ ...prev, output: minified, error: '' }))
     } catch (err) {
@@ -42,7 +73,7 @@ const JSONFormatter: React.FC = () => {
 
   const handleValidate = () => {
     try {
-      JSON.parse(state.input)
+      smartParseJSON(state.input)
       setState(prev => ({ ...prev, error: '✅ JSON格式正确！', output: '' }))
     } catch (err) {
       setState(prev => ({ ...prev, error: `❌ 错误: ${(err as Error).message}`, output: '' }))
@@ -192,14 +223,15 @@ const JSONFormatter: React.FC = () => {
           {[
             '{"name":"张三","age":25,"skills":["JavaScript","React","Node.js"]}',
             '[{"id":1,"title":"测试","completed":false},{"id":2,"title":"开发","completed":true}]',
-            '{"user":{"id":123,"profile":{"nickname":"小明","tags":["开发者","开源爱好者"]}}}'
+            '{"user":{"id":123,"profile":{"nickname":"小明","tags":["开发者","开源爱好者"]}}}',
+            '"{\\n  \\"name\\": \\"AlphaGo\\",\\n  \\"year\\": 2016,\\n  \\"tags\\": [\\"AI\\", \\"Go\\", \\"DeepMind\\"],\\n  \\"won\\": true,\\n  \\"score\\": 4.5\\n}"'
           ].map((sample, index) => (
             <button
               key={index}
               onClick={() => setState(prev => ({ ...prev, input: sample, error: '', output: '' }))}
               className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 rounded text-xs text-slate-300 transition-colors border border-slate-600/50"
             >
-              示例 {index + 1}
+              {index < 3 ? `示例 ${index + 1}` : '转义字符串'}
             </button>
           ))}
         </div>
@@ -212,7 +244,8 @@ const JSONFormatter: React.FC = () => {
           <li>• <strong>格式化</strong>：美化压缩的JSON，添加缩进和换行</li>
           <li>• <strong>压缩</strong>：将格式化的JSON去除所有空白字符</li>
           <li>• <strong>验证</strong>：检查JSON语法是否正确</li>
-          <li>• <strong>树形视图</strong>：可折叠的JSON结构，数组显示元素数量 [x项]，对象显示字段数量 {`{x个字段}`}</li>
+          <li>• <strong>智能解析</strong>：支持转义字符串形式的JSON（如带转义字符的字符串）</li>
+          <li>• <strong>树形视图</strong>：可折叠的JSON结构，数组显示元素数量 [x项]，对象显示字段数量 {'{x个字段}'}</li>
           <li>• <strong>视图切换</strong>：支持树形视图和语法高亮视图自由切换</li>
           <li>• <strong>行号显示</strong>：高亮视图自动显示行号，方便代码定位和调试</li>
           <li>• <strong>本地处理</strong>：所有操作在浏览器本地完成，数据安全</li>

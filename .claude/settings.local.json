@@ -17,7 +17,10 @@
       "mcp__chrome-devtools__click",
       "mcp__chrome-devtools__navigate_page",
       "Bash(npx jsonpath --help:*)",
-      "mcp__chrome-devtools__take_snapshot"
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__evaluate_script",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__close_page"
     ]
   }
 }
