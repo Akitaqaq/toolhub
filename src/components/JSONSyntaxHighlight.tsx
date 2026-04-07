@@ -379,7 +379,7 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
               const isFoldableStart = line.type === 'object' || line.type === 'array'
 
               return (
-                <div key={line.lineNumber} className="leading-relaxed px-3" style={{ height: '1.75rem' }}>
+                <div key={line.lineNumber} className="leading-relaxed px-3 whitespace-nowrap" style={{ height: '1.75rem' }}>
                   {isCollapsed && isFoldableStart ? (
                     <span className="text-orange-400 font-bold">
                       {line.type === 'object'
