@@ -12,6 +12,26 @@
       #root { min-height: 100vh; }
       .loading { text-align: center; padding: 60px 20px; opacity: 0.6; }
     </style>
+    <!-- 立即加载保存的主题，防止闪烁 -->
+    <script>
+      (function() {
+        try {
+          const saved = localStorage.getItem('toolhub-theme')
+          if (saved) {
+            const colors = JSON.parse(saved)
+            const root = document.documentElement
+            root.style.setProperty('--gradient-primary', 'linear-gradient(135deg, ' + colors.primaryStart + ' 0%, ' + colors.primaryEnd + ' 100%)')
+            root.style.setProperty('--gradient-secondary', 'linear-gradient(135deg, ' + colors.secondaryStart + ' 0%, ' + colors.secondaryEnd + ' 100%)')
+            root.style.setProperty('--gradient-accent', 'linear-gradient(135deg, ' + colors.accentStart + ' 0%, ' + colors.accentEnd + ' 100%)')
+            root.style.setProperty('--bg-color-1', colors.bgColor1)
+            root.style.setProperty('--bg-color-2', colors.bgColor2)
+            root.style.setProperty('--bg-color-3', colors.bgColor3)
+          }
+        } catch (e) {
+          console.error('Failed to load theme:', e)
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"><div class="loading">正在加载 ToolHub...</div></div>

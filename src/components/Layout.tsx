@@ -15,12 +15,10 @@ const Layout: React.FC = () => {
         root.style.setProperty('--gradient-primary', `linear-gradient(135deg, ${colors.primaryStart} 0%, ${colors.primaryEnd} 100%)`)
         root.style.setProperty('--gradient-secondary', `linear-gradient(135deg, ${colors.secondaryStart} 0%, ${colors.secondaryEnd} 100%)`)
         root.style.setProperty('--gradient-accent', `linear-gradient(135deg, ${colors.accentStart} 0%, ${colors.accentEnd} 100%)`)
-        // 背景色
+        // 背景色 - 使用CSS变量格式
         root.style.setProperty('--bg-color-1', colors.bgColor1)
         root.style.setProperty('--bg-color-2', colors.bgColor2)
         root.style.setProperty('--bg-color-3', colors.bgColor3)
-        // 应用到body
-        document.body.style.background = `linear-gradient(135deg, ${colors.bgColor1} 0%, ${colors.bgColor2} 50%, ${colors.bgColor3} 100%)`
       } catch (e) {
         console.error('Failed to load theme:', e)
       }
