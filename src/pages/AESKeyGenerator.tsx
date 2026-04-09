@@ -76,7 +76,7 @@ const AESKeyGenerator: React.FC = () => {
       {/* 标题 */}
       <div className="text-center space-y-2 mb-8">
         <h2 className="text-3xl md:text-4xl font-bold gradient-text">AES 密钥生成器</h2>
-        <p className="text-slate-400">安全随机密钥生成，支持 Base64 / Hex 格式</p>
+        <p className="text-slate-400">随机密钥生成，支持 Base64 / Hex 格式</p>
       </div>
 
       {/* 密钥长度选择 */}
@@ -151,10 +151,6 @@ const AESKeyGenerator: React.FC = () => {
         </div>
       )}
 
-      {/* 安全提示 */}
-      <div className="text-center text-xs text-slate-500">
-        使用浏览器加密 API 本地生成，密钥不会上传服务器
-      </div>
     </div>
   )
 }
