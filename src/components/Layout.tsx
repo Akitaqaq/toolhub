@@ -33,6 +33,7 @@ const Layout: React.FC = () => {
     { path: '/encoder', label: '编码解码' },
     { path: '/aes', label: 'AES密钥' },
     { path: '/md5', label: 'MD5加密' },
+    { path: '/sql', label: 'SQL格式化' },
     { path: '/theme', label: '主题设置' },
   ]
 

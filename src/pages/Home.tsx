@@ -46,6 +46,13 @@ const Home: React.FC = () => {
       gradient: 'bg-gradient-to-br from-orange-500 to-red-600',
     },
     {
+      path: '/sql',
+      title: 'SQL格式化',
+      description: 'SQL美化、压缩和多数据库方言支持',
+      icon: '🗃️',
+      gradient: 'bg-gradient-to-br from-teal-500 to-cyan-600',
+    },
+    {
       path: '/theme',
       title: '主题设置',
       description: '自定义网站配色方案',

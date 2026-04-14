@@ -20,7 +20,8 @@
       "mcp__chrome-devtools__take_snapshot",
       "mcp__chrome-devtools__evaluate_script",
       "mcp__chrome-devtools__take_screenshot",
-      "mcp__chrome-devtools__close_page"
+      "mcp__chrome-devtools__close_page",
+      "Bash(ls node_modules/sql-formatter/lib/*.d.ts)"
     ]
   }
 }
