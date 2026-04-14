@@ -53,6 +53,13 @@ const Home: React.FC = () => {
       gradient: 'bg-gradient-to-br from-teal-500 to-cyan-600',
     },
     {
+      path: '/cron',
+      title: 'Cron表达式解析',
+      description: '解析Cron表达式，查看可读描述和下次执行时间',
+      icon: '⏳',
+      gradient: 'bg-gradient-to-br from-indigo-500 to-violet-600',
+    },
+    {
       path: '/theme',
       title: '主题设置',
       description: '自定义网站配色方案',

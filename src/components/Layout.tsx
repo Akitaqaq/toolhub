@@ -34,6 +34,7 @@ const Layout: React.FC = () => {
     { path: '/aes', label: 'AES密钥' },
     { path: '/md5', label: 'MD5加密' },
     { path: '/sql', label: 'SQL格式化' },
+    { path: '/cron', label: 'Cron解析' },
     { path: '/theme', label: '主题设置' },
   ]
 

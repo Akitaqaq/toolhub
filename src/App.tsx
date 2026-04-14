@@ -9,6 +9,7 @@ import MD5Encryptor from './pages/MD5Encryptor'
 import ThemeCustomizer from './pages/ThemeCustomizer'
 import JSONPath from './pages/JSONPath'
 import SQLFormatter from './pages/SQLFormatter'
+import CronParser from './pages/CronParser'
 import { ToastProvider, ToastEventBridge } from './components/Toast'
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="aes" element={<AESKeyGenerator />} />
             <Route path="md5" element={<MD5Encryptor />} />
             <Route path="sql" element={<SQLFormatter />} />
+            <Route path="cron" element={<CronParser />} />
             <Route path="theme" element={<ThemeCustomizer />} />
           </Route>
         </Routes>

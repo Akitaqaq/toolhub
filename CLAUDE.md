@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**ToolHub** is a React-based online tool collection website built with Vite, TypeScript, and Tailwind CSS. It provides client-side utilities for JSON formatting, timestamp conversion, encoding/decoding, and AES key generation. All data processing happens locally in the browser for privacy and security.
+**ToolHub** is a React-based online tool collection website built with Vite, TypeScript, and Tailwind CSS. It provides client-side utilities for JSON formatting, SQL formatting, cron expression parsing, timestamp conversion, encoding/decoding, AES key generation, MD5 encryption, JSONPath queries, and theme customization. All data processing happens locally in the browser for privacy and security.
 
 ## Common Commands
 
@@ -39,24 +39,36 @@ src/
 ├── components/
 │   ├── Layout.tsx          # Main layout with navigation & gradient background
 │   ├── JSONSyntaxHighlight.tsx  # Syntax highlighting for JSON output
+│   ├── SQLSyntaxHighlight.tsx   # Syntax highlighting for SQL output
+│   ├── Toast.tsx           # Toast notification system
 │   └── ToolCard.tsx        # Reusable card & button components
 ├── pages/                  # Route-based tool pages
 │   ├── Home.tsx            # Landing page with tool cards
-│   ├── JSONFormatter.tsx   # JSON format/validate/minify
+│   ├── JSONFormatter.tsx   # JSON format/validate/minify/tree view
+│   ├── JSONPath.tsx        # JSONPath query tool
 │   ├── TimestampConverter.tsx  # Batch timestamp ↔ date conversion
 │   ├── EncoderDecoder.tsx  # URL/Base64/Unicode encoding
-│   └── AESKeyGenerator.tsx # Secure AES key generation
+│   ├── AESKeyGenerator.tsx # Secure AES key generation
+│   ├── MD5Encryptor.tsx    # MD5 hash generation (16/32 bit)
+│   ├── SQLFormatter.tsx    # SQL format/minify with syntax highlighting
+│   ├── CronParser.tsx      # Cron expression parsing with human-readable descriptions
+│   └── ThemeCustomizer.tsx # Custom theme color configuration
 └── styles/
     └── global.css          # Custom CSS: glassmorphism, gradients, animations
 ```
 
-### Routing Configuration (App.tsx:11-20)
+### Routing Configuration (App.tsx)
 ```typescript
 /
 ├── /json          → JSONFormatter
+├── /jsonpath      → JSONPath
 ├── /timestamp     → TimestampConverter
 ├── /encoder       → EncoderDecoder
-└── /aes           → AESKeyGenerator
+├── /aes           → AESKeyGenerator
+├── /md5           → MD5Encryptor
+├── /sql           → SQLFormatter
+├── /cron          → CronParser
+└── /theme         → ThemeCustomizer
 ```
 
 ### Design System
@@ -82,6 +94,13 @@ All tool pages follow a consistent pattern:
 - Minify/compress JSON
 - Syntax validation with error display
 - Syntax-highlighted output using `JSONSyntaxHighlight` component
+- Collapsible tree view for large JSON structures
+- Smart parsing of escaped JSON string inputs
+
+**JSONPath** (`src/pages/JSONPath.tsx`):
+- Query JSON data using JSONPath expressions
+- Filter, slice, and recursively search JSON documents
+- One-click sample queries
 
 **TimestampConverter** (`src/pages/TimestampConverter.tsx`):
 - **Batch mode**: Multiple input groups simultaneously
@@ -101,6 +120,32 @@ All tool pages follow a consistent pattern:
 - Formats: Hex, Base64, Raw, Java byte array, Java string
 - Randomness iterations for enhanced security
 - Java encryption usage examples
+
+**MD5Encryptor** (`src/pages/MD5Encryptor.tsx`):
+- 16-bit and 32-bit MD5 hash generation
+- Real-time conversion as you type
+- Copy result to clipboard
+
+**SQLFormatter** (`src/pages/SQLFormatter.tsx`):
+- Format SQL with 2/4/8 space indentation
+- Minify/compress SQL to single line
+- Dialect support: Standard SQL, MySQL, PostgreSQL, SQLite, T-SQL, BigQuery
+- Keyword case options: uppercase, lowercase, preserve
+- Syntax-highlighted output using `SQLSyntaxHighlight` component
+- Pre-filled sample queries for quick testing
+
+**CronParser** (`src/pages/CronParser.tsx`):
+- Parse and validate cron expressions in real time
+- Human-readable Chinese descriptions via `cronstrue`
+- Display next 5 execution times via `cron-parser`
+- Supports preset aliases (`@daily`, `@hourly`, etc.)
+- One-click copy for description and execution times
+- Common example expressions for quick testing
+
+**ThemeCustomizer** (`src/pages/ThemeCustomizer.tsx`):
+- Customize primary, secondary, and accent gradients
+- Adjust background color palette
+- Persistent theme saved to localStorage
 
 ### TypeScript Configuration
 - **Strict mode enabled** (`strict: true`)
