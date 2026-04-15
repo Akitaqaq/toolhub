@@ -128,24 +128,6 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* 使用说明 */}
-      <div className="glass rounded-xl p-6">
-        <h3 className="text-lg font-bold text-white mb-3">使用指南</h3>
-        <ul className="space-y-2 text-slate-300 text-sm">
-          <li className="flex items-start space-x-2">
-            <span className="text-green-400">✓</span>
-            <span>选择对应的功能模块，无需安装任何软件</span>
-          </li>
-          <li className="flex items-start space-x-2">
-            <span className="text-green-400">✓</span>
-            <span>所有数据在浏览器本地处理，安全可靠</span>
-          </li>
-          <li className="flex items-start space-x-2">
-            <span className="text-green-400">✓</span>
-            <span>支持一键复制、批量处理等便捷功能</span>
-          </li>
-        </ul>
-      </div>
     </div>
   )
 }
