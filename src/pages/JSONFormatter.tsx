@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import JSONSyntaxHighlight from '../components/JSONSyntaxHighlight'
 import CollapsibleJSONTree from '../components/CollapsibleJSONTree'
 import { toast } from '../components/Toast'
@@ -11,6 +11,8 @@ interface JSONState {
   viewMode: 'highlight' | 'tree'
 }
 
+type JSONValidity = 'empty' | 'valid' | 'invalid'
+
 const JSONFormatter: React.FC = () => {
   const [state, setState] = useState<JSONState>({
     input: '',
@@ -19,6 +21,35 @@ const JSONFormatter: React.FC = () => {
     indent: 2,
     viewMode: 'highlight',
   })
+  const [validity, setValidity] = useState<JSONValidity>('empty')
+  const debounceTimerRef = useRef<number | null>(null)
+
+  // 实时验证JSON有效性（防抖）
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+
+    if (!state.input.trim()) {
+      setValidity('empty')
+      return
+    }
+
+    debounceTimerRef.current = window.setTimeout(() => {
+      try {
+        smartParseJSON(state.input)
+        setValidity('valid')
+      } catch {
+        setValidity('invalid')
+      }
+    }, 300)
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [state.input])
 
   /**
    * 智能解析JSON，支持转义字符串形式的JSON
@@ -55,7 +86,10 @@ const JSONFormatter: React.FC = () => {
     try {
       const parsed = smartParseJSON(state.input)
       const formatted = JSON.stringify(parsed, null, state.indent)
+      const lineCount = formatted.split('\n').length
+      const charCount = formatted.length
       setState(prev => ({ ...prev, output: formatted, error: '' }))
+      toast.success(`格式化完成，共 ${lineCount} 行，${charCount} 字符`)
     } catch (err) {
       setState(prev => ({ ...prev, error: (err as Error).message, output: '' }))
     }
@@ -65,7 +99,11 @@ const JSONFormatter: React.FC = () => {
     try {
       const parsed = smartParseJSON(state.input)
       const minified = JSON.stringify(parsed)
+      const originalSize = state.input.length
+      const minifiedSize = minified.length
+      const ratio = ((1 - minifiedSize / originalSize) * 100).toFixed(1)
       setState(prev => ({ ...prev, output: minified, error: '' }))
+      toast.success(`压缩完成，减少 ${ratio}%（${originalSize} → ${minifiedSize} 字符）`)
     } catch (err) {
       setState(prev => ({ ...prev, error: (err as Error).message, output: '' }))
     }
@@ -97,6 +135,16 @@ const JSONFormatter: React.FC = () => {
     setState(prev => ({ ...prev, indent: parseInt(value) as 2 | 4 | 8 }))
   }
 
+  // 缓存解析后的JSON对象，避免重复解析
+  const parsedOutput = useMemo(() => {
+    if (!state.output) return null
+    try {
+      return JSON.parse(state.output)
+    } catch {
+      return null
+    }
+  }, [state.output])
+
   return (
     <div className="max-w-[90rem] mx-auto space-y-6 animate-fade-in px-4">
       <div className="text-center space-y-2 mb-6">
@@ -127,6 +175,56 @@ const JSONFormatter: React.FC = () => {
               </button>
             </div>
           </div>
+
+          {/* 示例数据 - 紧凑显示 */}
+          {!state.input && (
+            <div className="flex flex-wrap gap-2">
+              <span className="text-xs text-slate-500 self-center mr-1">示例:</span>
+              {[
+                '{"name":"张三","age":25,"skills":["JavaScript","React","Node.js"]}',
+                '[{"id":1,"title":"测试","completed":false},{"id":2,"title":"开发","completed":true}]',
+                '{"user":{"id":123,"profile":{"nickname":"小明","tags":["开发者","开源爱好者"]}}}',
+              ].map((sample, index) => (
+                <button
+                  key={index}
+                  onClick={() => setState(prev => ({ ...prev, input: sample, error: '', output: '' }))}
+                  className="px-2.5 py-1 bg-slate-800/60 hover:bg-indigo-500/20 rounded-md text-xs text-slate-400 hover:text-indigo-300 transition-all border border-slate-700/50 hover:border-indigo-500/30"
+                >
+                  示例{index + 1}
+                </button>
+              ))}
+              <button
+                onClick={() => setState(prev => ({
+                  ...prev,
+                  input: '"{\\n  \\"name\\": \\"AlphaGo\\",\\n  \\"year\\": 2016,\\n  \\"tags\\": [\\"AI\\", \\"Go\\", \\"DeepMind\\"],\\n  \\"won\\": true,\\n  \\"score\\": 4.5\\n}"',
+                  error: '',
+                  output: ''
+                }))}
+                className="px-2.5 py-1 bg-slate-800/60 hover:bg-purple-500/20 rounded-md text-xs text-slate-400 hover:text-purple-300 transition-all border border-slate-700/50 hover:border-purple-500/30"
+              >
+                转义字符串
+              </button>
+            </div>
+          )}
+
+          {/* JSON有效性状态指示器 */}
+          {state.input && (
+            <div className="flex items-center gap-2">
+              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                validity === 'valid'
+                  ? 'bg-green-500/15 text-green-400 border border-green-500/30'
+                  : validity === 'invalid'
+                  ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                  : 'bg-slate-700/50 text-slate-500 border border-slate-600/50'
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${
+                  validity === 'valid' ? 'bg-green-400' : validity === 'invalid' ? 'bg-red-400' : 'bg-slate-500'
+                }`} />
+                {validity === 'valid' ? '有效JSON' : validity === 'invalid' ? '无效JSON' : '空'}
+              </div>
+            </div>
+          )}
+
           <textarea
             value={state.input}
             onChange={(e) => setState(prev => ({ ...prev, input: e.target.value }))}
@@ -136,22 +234,22 @@ const JSONFormatter: React.FC = () => {
           />
 
           {/* 操作按钮 */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={handleFormat}
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all text-sm font-medium"
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all text-sm font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
             >
-              格式化
+              ✨ 格式化
             </button>
             <button
               onClick={handleMinify}
-              className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg hover:from-purple-600 hover:to-pink-700 transition-all text-sm font-medium"
+              className="px-4 py-2.5 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50 hover:border-slate-500 hover:text-white transition-all text-sm font-medium"
             >
               压缩
             </button>
             <button
               onClick={handleValidate}
-              className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all text-sm font-medium"
+              className="px-4 py-2.5 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50 hover:border-slate-500 hover:text-white transition-all text-sm font-medium"
             >
               验证
             </button>
@@ -198,9 +296,9 @@ const JSONFormatter: React.FC = () => {
 
           <div className="w-full h-[28rem] xl:h-[38rem] glass-code rounded-lg p-4 overflow-auto resize-y">
             {state.output ? (
-              state.viewMode === 'tree' ? (
+              state.viewMode === 'tree' && parsedOutput ? (
                 <CollapsibleJSONTree
-                  data={JSON.parse(state.output)}
+                  data={parsedOutput}
                   className="h-full"
                 />
               ) : (
@@ -213,27 +311,6 @@ const JSONFormatter: React.FC = () => {
               <div className="text-slate-500 text-sm opacity-60">格式化后的结果将显示在这里...</div>
             )}
           </div>
-        </div>
-      </div>
-
-      {/* 示例数据 */}
-      <div className="glass rounded-xl p-4">
-        <h3 className="text-sm font-semibold text-slate-300 mb-2">示例JSON数据</h3>
-        <div className="flex flex-wrap gap-2">
-          {[
-            '{"name":"张三","age":25,"skills":["JavaScript","React","Node.js"]}',
-            '[{"id":1,"title":"测试","completed":false},{"id":2,"title":"开发","completed":true}]',
-            '{"user":{"id":123,"profile":{"nickname":"小明","tags":["开发者","开源爱好者"]}}}',
-            '"{\\n  \\"name\\": \\"AlphaGo\\",\\n  \\"year\\": 2016,\\n  \\"tags\\": [\\"AI\\", \\"Go\\", \\"DeepMind\\"],\\n  \\"won\\": true,\\n  \\"score\\": 4.5\\n}"'
-          ].map((sample, index) => (
-            <button
-              key={index}
-              onClick={() => setState(prev => ({ ...prev, input: sample, error: '', output: '' }))}
-              className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 rounded text-xs text-slate-300 transition-colors border border-slate-600/50"
-            >
-              {index < 3 ? `示例 ${index + 1}` : '转义字符串'}
-            </button>
-          ))}
         </div>
       </div>
 
