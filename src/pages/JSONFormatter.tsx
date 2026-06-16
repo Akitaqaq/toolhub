@@ -98,15 +98,15 @@ const JSONFormatter: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 animate-fade-in">
+    <div className="max-w-[90rem] mx-auto space-y-6 animate-fade-in px-4">
       <div className="text-center space-y-2 mb-6">
         <h2 className="text-3xl md:text-4xl font-bold gradient-text">JSON格式化工具</h2>
         <p className="text-slate-400">支持JSON格式化、验证、压缩和转换</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-2 xl:gap-8 gap-4">
         {/* 输入区域 */}
-        <div className="glass rounded-xl p-4 space-y-3 h-fit">
+        <div className="glass rounded-xl p-5 space-y-4 h-fit">
           <div className="flex items-center justify-between">
             <label className="text-lg font-semibold text-white">输入JSON</label>
             <div className="flex items-center space-x-2">
@@ -131,7 +131,7 @@ const JSONFormatter: React.FC = () => {
             value={state.input}
             onChange={(e) => setState(prev => ({ ...prev, input: e.target.value }))}
             placeholder="在此粘贴JSON数据..."
-            className="w-full h-[22rem] lg:h-[30rem] bg-slate-900/50 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-200 focus:outline-none input-glow transition-all"
+            className="w-full h-[28rem] xl:h-[38rem] bg-slate-900/50 border border-slate-700 rounded-lg p-4 text-sm font-mono text-slate-200 focus:outline-none input-glow transition-all resize-y"
             spellCheck={false}
           />
 
@@ -159,7 +159,7 @@ const JSONFormatter: React.FC = () => {
         </div>
 
         {/* 输出区域 */}
-        <div className="glass rounded-xl p-4 space-y-3 flex flex-col">
+        <div className="glass rounded-xl p-5 space-y-4 flex flex-col">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <label className="text-lg font-semibold text-white">输出结果</label>
             <div className="flex gap-2 items-center">
@@ -196,7 +196,7 @@ const JSONFormatter: React.FC = () => {
             </div>
           )}
 
-          <div className="w-full h-[22rem] lg:h-[30rem] glass-code rounded-lg p-3 overflow-auto">
+          <div className="w-full h-[28rem] xl:h-[38rem] glass-code rounded-lg p-4 overflow-auto resize-y">
             {state.output ? (
               state.viewMode === 'tree' ? (
                 <CollapsibleJSONTree

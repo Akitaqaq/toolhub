@@ -101,7 +101,7 @@ const Layout: React.FC = () => {
         </div>
 
         {/* 主要内容区域 */}
-        <main className="flex-grow container mx-auto px-4 py-8">
+        <main className="flex-grow w-full max-w-[96rem] mx-auto px-6 py-8">
           <Outlet />
         </main>
 
