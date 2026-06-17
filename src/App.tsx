@@ -10,6 +10,7 @@ import ThemeCustomizer from './pages/ThemeCustomizer'
 import JSONPath from './pages/JSONPath'
 import SQLFormatter from './pages/SQLFormatter'
 import CronParser from './pages/CronParser'
+import ImageCompressor from './pages/ImageCompressor'
 import { ToastProvider, ToastEventBridge } from './components/Toast'
 import { ThemeProvider } from './contexts/ThemeContext'
 
@@ -31,6 +32,7 @@ function App() {
               <Route path="sql" element={<SQLFormatter />} />
               <Route path="cron" element={<CronParser />} />
               <Route path="theme" element={<ThemeCustomizer />} />
+              <Route path="image" element={<ImageCompressor />} />
             </Route>
           </Routes>
         </Router>

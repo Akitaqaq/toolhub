@@ -18,6 +18,7 @@ const Layout: React.FC = () => {
     { path: '/sql', label: 'SQL' },
     { path: '/cron', label: 'Cron' },
     { path: '/theme', label: '主题' },
+    { path: '/image', label: '图片压缩' },
   ]
 
   return (
