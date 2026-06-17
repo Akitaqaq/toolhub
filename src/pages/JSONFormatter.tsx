@@ -149,19 +149,19 @@ const JSONFormatter: React.FC = () => {
     <div className="max-w-[90rem] mx-auto space-y-6 animate-fade-in px-4">
       <div className="text-center space-y-2 mb-6">
         <h2 className="text-3xl md:text-4xl font-bold gradient-text">JSON格式化工具</h2>
-        <p className="text-slate-400">支持JSON格式化、验证、压缩和转换</p>
+        <p style={{ color: 'var(--fg-muted)' }}>支持JSON格式化、验证、压缩和转换</p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 xl:gap-8 gap-4">
         {/* 输入区域 */}
         <div className="glass rounded-xl p-5 space-y-4 h-fit">
           <div className="flex items-center justify-between">
-            <label className="text-lg font-semibold text-white">输入JSON</label>
+            <label className="text-lg font-semibold" style={{ color: 'var(--fg)' }}>输入JSON</label>
             <div className="flex items-center space-x-2">
               <select
                 value={state.indent}
                 onChange={(e) => handleIndentChange(e.target.value)}
-                className="bg-slate-800 text-white px-2 py-1 rounded text-sm border border-slate-600 focus:outline-none focus:border-indigo-500"
+                className="th-select px-2 py-1 rounded text-sm"
               >
                 <option value="2">2空格</option>
                 <option value="4">4空格</option>
@@ -169,7 +169,7 @@ const JSONFormatter: React.FC = () => {
               </select>
               <button
                 onClick={handleClear}
-                className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 text-sm transition-colors"
+                className="th-btn-danger px-3 py-1 rounded text-sm transition-colors"
               >
                 清空
               </button>
@@ -179,7 +179,7 @@ const JSONFormatter: React.FC = () => {
           {/* 示例数据 - 紧凑显示 */}
           {!state.input && (
             <div className="flex flex-wrap gap-2">
-              <span className="text-xs text-slate-500 self-center mr-1">示例:</span>
+              <span className="text-xs self-center mr-1" style={{ color: 'var(--fg-faint)' }}>示例:</span>
               {[
                 '{"name":"张三","age":25,"skills":["JavaScript","React","Node.js"]}',
                 '[{"id":1,"title":"测试","completed":false},{"id":2,"title":"开发","completed":true}]',
@@ -188,7 +188,7 @@ const JSONFormatter: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => setState(prev => ({ ...prev, input: sample, error: '', output: '' }))}
-                  className="px-2.5 py-1 bg-slate-800/60 hover:bg-indigo-500/20 rounded-md text-xs text-slate-400 hover:text-indigo-300 transition-all border border-slate-700/50 hover:border-indigo-500/30"
+                  className="th-tag px-2.5 py-1 rounded-md text-xs transition-all"
                 >
                   示例{index + 1}
                 </button>
@@ -200,7 +200,7 @@ const JSONFormatter: React.FC = () => {
                   error: '',
                   output: ''
                 }))}
-                className="px-2.5 py-1 bg-slate-800/60 hover:bg-purple-500/20 rounded-md text-xs text-slate-400 hover:text-purple-300 transition-all border border-slate-700/50 hover:border-purple-500/30"
+                className="th-tag px-2.5 py-1 rounded-md text-xs transition-all"
               >
                 转义字符串
               </button>
@@ -212,14 +212,12 @@ const JSONFormatter: React.FC = () => {
             <div className="flex items-center gap-2">
               <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
                 validity === 'valid'
-                  ? 'bg-green-500/15 text-green-400 border border-green-500/30'
+                  ? 'th-badge-valid'
                   : validity === 'invalid'
-                  ? 'bg-red-500/15 text-red-400 border border-red-500/30'
-                  : 'bg-slate-700/50 text-slate-500 border border-slate-600/50'
-              }`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${
-                  validity === 'valid' ? 'bg-green-400' : validity === 'invalid' ? 'bg-red-400' : 'bg-slate-500'
-                }`} />
+                  ? 'th-badge-invalid'
+                  : ''
+              }`} style={validity === 'empty' ? { background: 'var(--surface)', color: 'var(--fg-faint)', border: '1px solid var(--border)' } : undefined}>
+                <span className={`w-1.5 h-1.5 rounded-full`} style={{ backgroundColor: validity === 'valid' ? 'var(--success)' : validity === 'invalid' ? 'var(--error)' : 'var(--fg-faint)' }} />
                 {validity === 'valid' ? '有效JSON' : validity === 'invalid' ? '无效JSON' : '空'}
               </div>
             </div>
@@ -229,7 +227,7 @@ const JSONFormatter: React.FC = () => {
             value={state.input}
             onChange={(e) => setState(prev => ({ ...prev, input: e.target.value }))}
             placeholder="在此粘贴JSON数据..."
-            className="w-full h-[28rem] xl:h-[38rem] bg-slate-900/50 border border-slate-700 rounded-lg p-4 text-sm font-mono text-slate-200 focus:outline-none input-glow transition-all resize-y"
+            className="th-input w-full h-[28rem] xl:h-[38rem] rounded-lg p-4 text-sm font-mono transition-all resize-y"
             spellCheck={false}
           />
 
@@ -237,19 +235,19 @@ const JSONFormatter: React.FC = () => {
           <div className="flex flex-wrap gap-3">
             <button
               onClick={handleFormat}
-              className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all text-sm font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
+              className="th-btn-accent px-6 py-2.5 text-sm font-semibold"
             >
               ✨ 格式化
             </button>
             <button
               onClick={handleMinify}
-              className="px-4 py-2.5 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50 hover:border-slate-500 hover:text-white transition-all text-sm font-medium"
+              className="th-btn-ghost px-4 py-2.5 text-sm font-medium"
             >
               压缩
             </button>
             <button
               onClick={handleValidate}
-              className="px-4 py-2.5 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50 hover:border-slate-500 hover:text-white transition-all text-sm font-medium"
+              className="th-btn-ghost px-4 py-2.5 text-sm font-medium"
             >
               验证
             </button>
@@ -259,12 +257,12 @@ const JSONFormatter: React.FC = () => {
         {/* 输出区域 */}
         <div className="glass rounded-xl p-5 space-y-4 flex flex-col">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <label className="text-lg font-semibold text-white">输出结果</label>
+            <label className="text-lg font-semibold" style={{ color: 'var(--fg)' }}>输出结果</label>
             <div className="flex gap-2 items-center">
               {state.output && (
                 <button
                   onClick={() => handleCopy(state.output)}
-                  className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20 text-sm transition-colors"
+                  className="th-btn-ghost px-3 py-1 text-sm"
                 >
                   复制
                 </button>
@@ -272,11 +270,7 @@ const JSONFormatter: React.FC = () => {
               {state.output && (
                 <button
                   onClick={toggleViewMode}
-                  className={`px-3 py-1 rounded text-sm transition-colors border ${
-                    state.viewMode === 'highlight'
-                      ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/30'
-                      : 'bg-purple-500/20 text-purple-300 border-purple-500/30 hover:bg-purple-500/30'
-                  }`}
+                  className="th-btn-soft px-3 py-1 rounded text-sm transition-colors"
                 >
                   {state.viewMode === 'highlight' ? '🔍 高亮视图' : '📋 树形视图'}
                 </button>
@@ -287,8 +281,8 @@ const JSONFormatter: React.FC = () => {
           {state.error && (
             <div className={`p-3 rounded-lg text-sm border ${
               state.error.startsWith('✅')
-                ? 'bg-green-500/10 border-green-500/30 text-green-400'
-                : 'bg-red-500/10 border-red-500/30 text-red-400'
+                ? 'th-panel-success'
+                : 'th-panel-error'
             }`}>
               {state.error}
             </div>
@@ -308,7 +302,7 @@ const JSONFormatter: React.FC = () => {
                 />
               )
             ) : (
-              <div className="text-slate-500 text-sm opacity-60">格式化后的结果将显示在这里...</div>
+              <div className="text-sm opacity-60" style={{ color: 'var(--fg-faint)' }}>格式化后的结果将显示在这里...</div>
             )}
           </div>
         </div>

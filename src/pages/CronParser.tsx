@@ -90,15 +90,15 @@ const CronParser: React.FC = () => {
     <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
       <div className="text-center space-y-2 mb-6">
         <h2 className="text-3xl md:text-4xl font-bold gradient-text">Cron 表达式解析</h2>
-        <p className="text-slate-400">解析 Cron 表达式，查看可读描述和下次执行时间</p>
+        <p style={{ color: 'var(--fg-muted)' }}>解析 Cron 表达式，查看可读描述和下次执行时间</p>
       </div>
 
       <div className="glass rounded-xl p-4 space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <label className="text-lg font-semibold text-white">Cron 表达式</label>
+          <label className="th-section-header">Cron 表达式</label>
           <button
             onClick={() => setState(prev => ({ ...prev, input: '', description: '', nextRuns: [], error: '' }))}
-            className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 text-sm transition-colors"
+            className="th-btn-danger px-3 py-1 rounded text-sm transition-colors"
           >
             清空
           </button>
@@ -109,26 +109,26 @@ const CronParser: React.FC = () => {
           value={state.input}
           onChange={(e) => setState(prev => ({ ...prev, input: e.target.value }))}
           placeholder="例如: */5 * * * *"
-          className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-base font-mono text-slate-200 focus:outline-none input-glow transition-all"
+          className="th-input w-full rounded-lg px-4 py-3 text-base font-mono transition-all"
           spellCheck={false}
         />
 
         {state.error && (
-          <div className="p-3 rounded-lg text-sm border bg-red-500/10 border-red-500/30 text-red-400">
+          <div className="th-panel-error p-3 rounded-lg text-sm border">
             {state.error}
           </div>
         )}
 
         {state.description && !state.error && (
-          <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
-            <div className="text-sm text-slate-400 mb-1">含义描述</div>
+          <div className="th-panel-info p-4 rounded-xl">
+            <div className="text-sm mb-1" style={{ color: 'var(--fg-muted)' }}>含义描述</div>
             <div className="flex items-center justify-between gap-4">
-              <div className="text-lg md:text-xl font-medium text-white">
+              <div className="text-lg md:text-xl font-medium" style={{ color: 'var(--fg)' }}>
                 {state.description}
               </div>
               <button
                 onClick={() => handleCopy(state.description)}
-                className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20 text-sm transition-colors shrink-0"
+                className="th-btn-ghost px-3 py-1 rounded text-sm transition-colors shrink-0"
               >
                 复制
               </button>
@@ -137,15 +137,15 @@ const CronParser: React.FC = () => {
         )}
 
         {state.nextRuns.length > 0 && !state.error && (
-          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-            <div className="text-sm text-slate-400 mb-2">未来 5 次执行时间</div>
+          <div className="th-panel-success p-4 rounded-xl">
+            <div className="text-sm mb-2" style={{ color: 'var(--fg-muted)' }}>未来 5 次执行时间</div>
             <ul className="space-y-2">
               {state.nextRuns.map((run, index) => (
                 <li key={index} className="flex items-center justify-between gap-4">
-                  <span className="text-slate-200 font-mono text-sm">{run}</span>
+                  <span className="font-mono text-sm" style={{ color: 'var(--fg-secondary)' }}>{run}</span>
                   <button
                     onClick={() => handleCopy(run)}
-                    className="px-2 py-1 bg-white/10 text-white rounded hover:bg-white/20 text-xs transition-colors shrink-0"
+                    className="th-btn-ghost px-2 py-1 rounded text-xs transition-colors shrink-0"
                   >
                     复制
                   </button>
@@ -157,13 +157,13 @@ const CronParser: React.FC = () => {
       </div>
 
       <div className="glass rounded-xl p-4">
-        <h3 className="text-sm font-semibold text-slate-300 mb-2">常用示例</h3>
+        <h3 className="th-section-header mb-2">常用示例</h3>
         <div className="flex flex-wrap gap-2">
           {examples.map((example) => (
             <button
               key={example.value}
               onClick={() => setState(prev => ({ ...prev, input: example.value }))}
-              className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 rounded text-xs text-slate-300 transition-colors border border-slate-600/50"
+              className="th-tag px-3 py-1.5 rounded text-xs transition-colors"
             >
               {example.label}
             </button>

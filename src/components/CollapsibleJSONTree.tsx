@@ -39,24 +39,24 @@ const CollapsibleJSONTree: React.FC<CollapsibleJSONTreeProps> = ({
     const type = typeof value
 
     if (value === null) {
-      return <span className="text-gray-400">null</span>
+      return <span style={{ color: 'var(--syn-null)' }}>null</span>
     }
 
     if (type === 'string') {
-      return <span className="text-green-400">"{value}"</span>
+      return <span style={{ color: 'var(--syn-string)' }}>"{value}"</span>
     }
 
     if (type === 'number') {
-      return <span className="text-pink-400">{value}</span>
+      return <span style={{ color: 'var(--syn-number)' }}>{value}</span>
     }
 
     if (type === 'boolean') {
-      return <span className="text-purple-400 font-semibold">{value.toString()}</span>
+      return <span style={{ color: 'var(--syn-bool)', fontWeight: 600 }}>{value.toString()}</span>
     }
 
     if (Array.isArray(value)) {
       if (value.length === 0) {
-        return <span className="text-orange-400">[]</span>
+        return <span style={{ color: 'var(--syn-bracket)' }}>[]</span>
       }
 
       const isCollapsed = collapsed[currentPath]
@@ -68,18 +68,18 @@ const CollapsibleJSONTree: React.FC<CollapsibleJSONTreeProps> = ({
             onClick={() => toggleCollapse(currentPath)}
             className="cursor-pointer hover:bg-white/10 px-1 rounded transition-colors inline-flex items-center gap-1"
           >
-            <span className="text-orange-400">[</span>
-            <span className="text-orange-400 font-bold">{isCollapsed ? '▶' : '▼'}</span>
-            <span className="text-orange-400">{countInfo.trimStart()}</span>
-            <span className="text-orange-400">]</span>
+            <span style={{ color: 'var(--syn-bracket)' }}>[</span>
+            <span className="font-bold" style={{ color: 'var(--syn-bracket)' }}>{isCollapsed ? '▶' : '▼'}</span>
+            <span style={{ color: 'var(--syn-bracket)' }}>{countInfo.trimStart()}</span>
+            <span style={{ color: 'var(--syn-bracket)' }}>]</span>
           </span>
           {!isCollapsed && (
-            <div className="ml-4 border-l border-slate-700 pl-2">
+            <div className="ml-4 pl-2" style={{ borderLeft: '1px solid var(--border)' }}>
               {value.map((item, index) => (
                 <div key={index} className="leading-relaxed">
-                  <span className="text-slate-500">{index}:</span>
+                  <span style={{ color: 'var(--syn-line-num)' }}>{index}:</span>
                   {renderValue(item, `${key}[${index}]`, `${currentPath}.${index}`)}
-                  {index < value.length - 1 && <span className="text-slate-400">,</span>}
+                  {index < value.length - 1 && <span style={{ color: 'var(--syn-comma)' }}>,</span>}
                 </div>
               ))}
             </div>
@@ -92,7 +92,7 @@ const CollapsibleJSONTree: React.FC<CollapsibleJSONTreeProps> = ({
       const keys = Object.keys(value)
       if (keys.length === 0) {
         const emptyObj = '{}'
-        return <span className="text-orange-400">{emptyObj}</span>
+        return <span style={{ color: 'var(--syn-bracket)' }}>{emptyObj}</span>
       }
 
       const isCollapsed = collapsed[currentPath]
@@ -106,19 +106,19 @@ const CollapsibleJSONTree: React.FC<CollapsibleJSONTreeProps> = ({
             onClick={() => toggleCollapse(currentPath)}
             className="cursor-pointer hover:bg-white/10 px-1 rounded transition-colors inline-flex items-center gap-1"
           >
-            <span className="text-orange-400">{openBrace}</span>
-            <span className="text-orange-400 font-bold">{isCollapsed ? '▶' : '▼'}</span>
-            <span className="text-orange-400">{countInfo.trimStart()}</span>
-            <span className="text-orange-400">{closeBrace}</span>
+            <span style={{ color: 'var(--syn-bracket)' }}>{openBrace}</span>
+            <span className="font-bold" style={{ color: 'var(--syn-bracket)' }}>{isCollapsed ? '▶' : '▼'}</span>
+            <span style={{ color: 'var(--syn-bracket)' }}>{countInfo.trimStart()}</span>
+            <span style={{ color: 'var(--syn-bracket)' }}>{closeBrace}</span>
           </span>
           {!isCollapsed && (
-            <div className="ml-4 border-l border-slate-700 pl-2">
+            <div className="ml-4 pl-2" style={{ borderLeft: '1px solid var(--border)' }}>
               {keys.map((objKey, index) => (
                 <div key={objKey} className="leading-relaxed">
-                  <span className="text-blue-400 font-medium">"{objKey}"</span>
-                  <span className="text-slate-400">: </span>
+                  <span style={{ color: 'var(--syn-key)', fontWeight: 500 }}>"{objKey}"</span>
+                  <span style={{ color: 'var(--syn-comma)' }}>: </span>
                   {renderValue(value[objKey], objKey, `${currentPath}.${objKey}`)}
-                  {index < keys.length - 1 && <span className="text-slate-400">,</span>}
+                  {index < keys.length - 1 && <span style={{ color: 'var(--syn-comma)' }}>,</span>}
                 </div>
               ))}
             </div>
@@ -127,7 +127,7 @@ const CollapsibleJSONTree: React.FC<CollapsibleJSONTreeProps> = ({
       )
     }
 
-    return <span className="text-yellow-300">{String(value)}</span>
+    return <span style={{ color: 'var(--syn-number)' }}>{String(value)}</span>
   }
 
   if (!data) return null

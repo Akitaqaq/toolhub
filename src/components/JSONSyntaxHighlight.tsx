@@ -286,28 +286,26 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
       }
 
       const matchedText = match[0]
-      let className = 'text-yellow-300'
+      let style: React.CSSProperties = { color: 'var(--syn-number)' }
 
       if (/^"/.test(matchedText)) {
         if (/:$/.test(matchedText)) {
-          className = 'text-blue-400 font-medium'
+          style = { color: 'var(--syn-key)', fontWeight: 500 }
         } else {
-          className = 'text-green-400'
+          style = { color: 'var(--syn-string)' }
         }
       } else if (/true|false/.test(matchedText)) {
-        className = 'text-purple-400 font-semibold'
+        style = { color: 'var(--syn-bool)', fontWeight: 600 }
       } else if (/null/.test(matchedText)) {
-        className = 'text-gray-400'
+        style = { color: 'var(--syn-null)' }
       } else if (/[{}\[\]]/.test(matchedText)) {
-        className = 'text-orange-400 font-bold'
+        style = { color: 'var(--syn-bracket)', fontWeight: 700 }
       } else if (/[,]/.test(matchedText)) {
-        className = 'text-slate-400'
-      } else if (/-?\d/.test(matchedText)) {
-        className = 'text-pink-400'
+        style = { color: 'var(--syn-comma)' }
       }
 
       parts.push(
-        <span key={`match-${match.index}`} className={className}>
+        <span key={`match-${match.index}`} style={style}>
           {matchedText}
         </span>
       )
@@ -338,9 +336,9 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
     return (
       <div className={`flex flex-col ${className}`} style={{ fontFamily: "'Consolas', 'Monaco', 'Courier New', monospace" }}>
         {/* 外层容器：包含行号/折叠按钮区域 + 内容区域 */}
-        <div className="flex border border-slate-700/50 rounded-lg overflow-hidden bg-slate-900/30">
+        <div className="flex rounded-lg overflow-hidden" style={{ border: '1px solid var(--code-border)', background: 'var(--code-bg)' }}>
           {/* 左侧：折叠箭头 + 行号 */}
-          <div className="flex-shrink-0 select-none border-r border-slate-700/50 bg-slate-900/20">
+          <div className="flex-shrink-0 select-none" style={{ borderRight: '1px solid var(--code-border)', background: 'var(--code-bg)' }}>
             {visibleLines.map(line => {
               const paddedLineNumber = line.lineNumber.toString().padStart(lineNumWidth, ' ')
               const isCollapsed = collapsed[line.path]
@@ -355,7 +353,8 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
                           e.stopPropagation()
                           toggleCollapse(line.path)
                         }}
-                        className="cursor-pointer hover:bg-white/10 px-1 text-orange-400 inline-block"
+                        className="cursor-pointer hover:bg-white/10 px-1 inline-block"
+                        style={{ color: 'var(--syn-fold)' }}
                         title={line.type === 'object' ? '展开/折叠对象' : '展开/折叠数组'}
                       >
                         {isCollapsed ? '▶' : '▼'}
@@ -364,7 +363,7 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
                   </div>
 
                   {/* 行号 */}
-                  <div className="w-10 text-right pr-2 text-slate-500 opacity-60">
+                  <div className="w-10 text-right pr-2 opacity-60" style={{ color: 'var(--syn-line-num)' }}>
                     {paddedLineNumber}
                   </div>
                 </div>
@@ -381,7 +380,7 @@ const JSONSyntaxHighlight: React.FC<JSONSyntaxHighlightProps> = ({ json, classNa
               return (
                 <div key={line.lineNumber} className="leading-relaxed px-3 whitespace-nowrap" style={{ height: '1.75rem' }}>
                   {isCollapsed && isFoldableStart ? (
-                    <span className="text-orange-400 font-bold">
+                    <span className="font-bold" style={{ color: 'var(--syn-fold)' }}>
                       {line.type === 'object'
                         ? `{...${line.itemCount || 0}个字段}`
                         : `[...${line.itemCount || 0}项]`}

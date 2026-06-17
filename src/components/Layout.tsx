@@ -1,118 +1,168 @@
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
+import { useTheme } from '../contexts/ThemeContext'
 
 const Layout: React.FC = () => {
   const location = useLocation()
-
-  // 页面加载时应用保存的主题
-  useEffect(() => {
-    const saved = localStorage.getItem('toolhub-theme')
-    if (saved) {
-      try {
-        const colors = JSON.parse(saved)
-        const root = document.documentElement
-        // 渐变色
-        root.style.setProperty('--gradient-primary', `linear-gradient(135deg, ${colors.primaryStart} 0%, ${colors.primaryEnd} 100%)`)
-        root.style.setProperty('--gradient-secondary', `linear-gradient(135deg, ${colors.secondaryStart} 0%, ${colors.secondaryEnd} 100%)`)
-        root.style.setProperty('--gradient-accent', `linear-gradient(135deg, ${colors.accentStart} 0%, ${colors.accentEnd} 100%)`)
-        // 背景色 - 使用CSS变量格式
-        root.style.setProperty('--bg-color-1', colors.bgColor1)
-        root.style.setProperty('--bg-color-2', colors.bgColor2)
-        root.style.setProperty('--bg-color-3', colors.bgColor3)
-      } catch (e) {
-        console.error('Failed to load theme:', e)
-      }
-    }
-  }, [])
+  const { theme, toggleTheme } = useTheme()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navItems = [
     { path: '/', label: '首页' },
-    { path: '/json', label: 'JSON格式化' },
-    { path: '/jsonpath', label: 'JSONPath查询' },
-    { path: '/timestamp', label: '时间戳转换' },
+    { path: '/json', label: 'JSON' },
+    { path: '/jsonpath', label: 'JSONPath' },
+    { path: '/timestamp', label: '时间戳' },
     { path: '/encoder', label: '编码解码' },
     { path: '/aes', label: 'AES密钥' },
-    { path: '/md5', label: 'MD5加密' },
-    { path: '/sql', label: 'SQL格式化' },
-    { path: '/cron', label: 'Cron解析' },
-    { path: '/theme', label: '主题设置' },
+    { path: '/md5', label: 'MD5' },
+    { path: '/sql', label: 'SQL' },
+    { path: '/cron', label: 'Cron' },
+    { path: '/theme', label: '主题' },
   ]
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* 动态渐变背景 - 使用CSS变量 */}
-      <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 animate-pulse" style={{
-          animationDuration: '8s',
-          background: 'linear-gradient(135deg, var(--bg-color-1, #0f172a) 0%, var(--bg-color-2, #1e293b) 50%, var(--bg-color-3, #334155) 100%)'
-        }}></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-mesh opacity-20"></div>
-        <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] opacity-10 transform rotate-45" style={{
-          background: 'var(--gradient-primary, linear-gradient(135deg, #667eea 0%, #764ba2 100%))'
-        }}></div>
-      </div>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      {/* Navigation */}
+      <header
+        className="sticky top-0 z-30"
+        style={{
+          background: 'var(--nav-bg)',
+          backdropFilter: 'saturate(180%) blur(14px)',
+          borderBottom: '1px solid var(--nav-border)',
+        }}
+      >
+        <div className="max-w-[1200px] mx-auto px-6 flex items-center h-16 gap-8">
+          {/* Brand */}
+          <Link to="/" className="flex items-center gap-2.5 font-bold text-[17px] tracking-tight shrink-0" style={{ color: 'var(--fg)', fontFamily: 'var(--font-display)' }}>
+            <span
+              className="w-7 h-7 rounded-lg"
+              style={{ background: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }}
+            />
+            ToolHub
+          </Link>
 
-      {/* 主容器 */}
-      <div className="relative z-10 min-h-screen flex flex-col">
-        {/* 头部导航 */}
-        <header className="glass sticky top-0 backdrop-blur-lg border-b border-white/10">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <Link to="/" className="text-2xl font-bold neon-text gradient-text">
-                ToolHub
-              </Link>
-
-              <nav className="hidden md:flex space-x-2">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`px-4 py-2 rounded-lg transition-all duration-300 text-sm font-medium ${
-                      location.pathname === item.path
-                        ? 'bg-white/10 text-white'
-                        : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-          </div>
-        </header>
-
-        {/* 移动端导航 */}
-        <div className="md:hidden glass border-b border-white/10">
-          <div className="container mx-auto px-4 py-2 flex overflow-x-auto space-x-2">
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-3 py-2 rounded-lg text-sm whitespace-nowrap transition-all ${
-                  location.pathname === item.path
-                    ? 'bg-white/10 text-white'
-                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                }`}
+                className="px-3 py-1.5 rounded-lg text-sm transition-all"
+                style={{
+                  color: location.pathname === item.path ? 'var(--fg)' : 'var(--fg-muted)',
+                  fontWeight: location.pathname === item.path ? 500 : 400,
+                  background: location.pathname === item.path ? 'var(--surface-active)' : 'transparent',
+                }}
+                onMouseEnter={(e) => {
+                  if (location.pathname !== item.path) {
+                    e.currentTarget.style.color = 'var(--fg)'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location.pathname !== item.path) {
+                    e.currentTarget.style.color = 'var(--fg-muted)'
+                  }
+                }}
               >
                 {item.label}
               </Link>
             ))}
-          </div>
+          </nav>
+
+          <div className="flex-1" />
+
+          {/* Theme toggle */}
+          <button
+            onClick={toggleTheme}
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-lg transition-all"
+            style={{
+              color: 'var(--fg-muted)',
+              border: '1px solid var(--border)',
+              background: 'var(--surface)',
+            }}
+            title={theme === 'light' ? '切换到深色模式' : '切换到浅色模式'}
+          >
+            {theme === 'light' ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            )}
+          </button>
+
+          {/* Mobile menu toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center"
+            style={{
+              color: 'var(--fg-muted)',
+              border: '1px solid var(--border)',
+              background: 'var(--surface)',
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              {mobileMenuOpen ? (
+                <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
+              ) : (
+                <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>
+              )}
+            </svg>
+          </button>
         </div>
 
-        {/* 主要内容区域 */}
-        <main className="flex-grow w-full max-w-[96rem] mx-auto px-6 py-8">
-          <Outlet />
-        </main>
-
-        {/* 页脚 */}
-        <footer className="glass border-t border-white/10 mt-auto">
-          <div className="container mx-auto px-4 py-6 text-center text-slate-400 text-sm">
-            <p>© 2025 ToolHub. 多功能在线工具集合</p>
-            <p className="mt-2 text-xs opacity-70">数据本地处理 · 隐私安全 · 免费使用</p>
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div
+            className="lg:hidden px-4 pb-4"
+            style={{ borderTop: '1px solid var(--border)' }}
+          >
+            <div className="flex flex-wrap gap-1.5 pt-3">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2 rounded-lg text-sm transition-all"
+                  style={{
+                    color: location.pathname === item.path ? 'var(--fg)' : 'var(--fg-muted)',
+                    fontWeight: location.pathname === item.path ? 500 : 400,
+                    background: location.pathname === item.path ? 'var(--surface-active)' : 'transparent',
+                    border: '1px solid ' + (location.pathname === item.path ? 'var(--border)' : 'transparent'),
+                  }}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
           </div>
-        </footer>
-      </div>
+        )}
+      </header>
+
+      {/* Main content */}
+      <main className="w-full max-w-[1200px] mx-auto px-6 py-8">
+        <Outlet />
+      </main>
+
+      {/* Footer */}
+      <footer style={{ borderTop: '1px solid var(--border)', color: 'var(--fg-muted)' }}>
+        <div className="max-w-[1200px] mx-auto px-6 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
+            <div className="flex items-center gap-2.5">
+              <span
+                className="w-5 h-5 rounded-md"
+                style={{ background: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }}
+              />
+              <span style={{ fontWeight: 600, color: 'var(--fg)' }}>ToolHub</span>
+              <span className="hidden md:inline" style={{ color: 'var(--fg-faint)' }}>|</span>
+              <span className="hidden md:inline">多功能在线工具集合</span>
+            </div>
+            <div className="flex items-center gap-4 text-xs" style={{ color: 'var(--fg-faint)' }}>
+              <span>数据本地处理</span>
+              <span>隐私安全</span>
+              <span>免费使用</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

@@ -463,18 +463,22 @@ const TimestampConverter: React.FC = () => {
   const ResultCard: React.FC<{ label: string; value: string; field: string; copyLabel: string; small?: boolean }> = ({ label, value, field, copyLabel, small }) => (
     <div
       onClick={() => handleCopy(value, field, copyLabel)}
-      className={`bg-slate-900/50 rounded-lg p-3 border transition-all cursor-pointer ${
+      className={`rounded-lg p-3 border transition-all cursor-pointer ${
         copiedField === field
           ? 'border-green-500/40 bg-green-500/5 scale-[1.01]'
-          : 'border-slate-800/50 hover:border-slate-700/50 hover:bg-slate-800/40'
+          : 'hover:bg-[var(--bg-hover)]'
       }`}
+      style={{
+        backgroundColor: copiedField === field ? undefined : 'color-mix(in srgb, var(--bg-card) 50%, transparent)',
+        borderColor: copiedField === field ? undefined : 'var(--border)',
+      }}
     >
-      <div className="text-xs text-slate-500 mb-1.5">{label}</div>
+      <div className="text-xs mb-1.5" style={{ color: 'var(--fg-faint)' }}>{label}</div>
       <div className="flex items-center justify-between gap-2">
-        <span className={`font-mono text-slate-200 truncate ${small ? 'text-xs' : 'text-sm'}`}>{value}</span>
+        <span className={`font-mono truncate ${small ? 'text-xs' : 'text-sm'}`} style={{ color: 'var(--fg-secondary)' }}>{value}</span>
         <span className={`text-xs px-2 py-0.5 rounded transition-all flex-shrink-0 ${
-          copiedField === field ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-slate-400'
-        }`}>
+          copiedField === field ? 'bg-green-500/20 text-green-400' : ''
+        }`} style={copiedField !== field ? { color: 'var(--fg-muted)', backgroundColor: 'color-mix(in srgb, var(--fg) 10%, transparent)' } : undefined}>
           {copiedField === field ? '已复制' : '复制'}
         </span>
       </div>
@@ -486,12 +490,12 @@ const TimestampConverter: React.FC = () => {
       {/* Header + Live Clock */}
       <div className="text-center space-y-2 mb-6">
         <h2 className="text-3xl md:text-4xl font-bold gradient-text">时间戳转换</h2>
-        <p className="text-slate-400">时间戳与日期时间相互转换</p>
-        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-slate-800/40 border border-slate-700/40 text-sm">
-          <span className="text-slate-500">当前:</span>
-          <span className="font-mono text-indigo-300">{liveTimestamp}</span>
-          <span className="text-slate-600">|</span>
-          <span className="font-mono text-slate-300">{liveFormatted}</span>
+        <p style={{ color: 'var(--fg-muted)' }}>时间戳与日期时间相互转换</p>
+        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full text-sm" style={{ backgroundColor: 'color-mix(in srgb, var(--bg-card) 40%, transparent)', border: '1px solid var(--border)' }}>
+          <span style={{ color: 'var(--fg-faint)' }}>当前:</span>
+          <span className="font-mono" style={{ color: 'var(--accent)' }}>{liveTimestamp}</span>
+          <span style={{ color: 'var(--fg-faint)' }}>|</span>
+          <span className="font-mono" style={{ color: 'var(--fg-secondary)' }}>{liveFormatted}</span>
         </div>
       </div>
 
@@ -501,8 +505,8 @@ const TimestampConverter: React.FC = () => {
           onClick={() => setMode('single')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
             mode === 'single'
-              ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/25'
-              : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 hover:text-slate-300'
+              ? 'th-btn-accent shadow-md'
+              : 'th-btn-ghost'
           }`}
         >
           单个转换
@@ -511,8 +515,8 @@ const TimestampConverter: React.FC = () => {
           onClick={() => setMode('batch')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
             mode === 'batch'
-              ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/25'
-              : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 hover:text-slate-300'
+              ? 'th-btn-accent shadow-md'
+              : 'th-btn-ghost'
           }`}
         >
           批量转换
@@ -524,10 +528,10 @@ const TimestampConverter: React.FC = () => {
           {/* ===== Input Panel ===== */}
           <div className="glass rounded-xl p-5 space-y-4 h-fit">
             <div className="flex items-center justify-between">
-              <label className="text-lg font-semibold text-white">输入</label>
+              <label className="text-lg font-semibold" style={{ color: 'var(--fg)' }}>输入</label>
               <button
                 onClick={handleClear}
-                className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 text-sm transition-colors"
+                className="th-btn-danger px-3 py-1 rounded text-sm transition-colors"
               >
                 清空
               </button>
@@ -536,12 +540,12 @@ const TimestampConverter: React.FC = () => {
             {/* Example chips */}
             {!timestamp && !datetime && (
               <div className="flex flex-wrap gap-2">
-                <span className="text-xs text-slate-500 self-center mr-1">示例:</span>
+                <span className="text-xs self-center mr-1" style={{ color: 'var(--fg-faint)' }}>示例:</span>
                 {EXAMPLE_TIMESTAMPS.map((ex, i) => (
                   <button
                     key={i}
                     onClick={() => handleTimestampChange(ex.value())}
-                    className="px-2.5 py-1 bg-slate-800/60 hover:bg-indigo-500/20 rounded-md text-xs text-slate-400 hover:text-indigo-300 transition-all border border-slate-700/50 hover:border-indigo-500/30"
+                    className="th-tag px-2.5 py-1 rounded-md text-xs transition-all"
                   >
                     {ex.label}
                   </button>
@@ -552,7 +556,7 @@ const TimestampConverter: React.FC = () => {
             {/* Timestamp input */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-sm text-slate-300 font-medium">时间戳</label>
+                <label className="text-sm font-medium" style={{ color: 'var(--fg-secondary)' }}>时间戳</label>
                 <ValidityBadge validity={tsValidity} />
               </div>
               <input
@@ -560,9 +564,9 @@ const TimestampConverter: React.FC = () => {
                 value={timestamp}
                 onChange={(e) => handleTimestampChange(e.target.value)}
                 placeholder="输入秒级或毫秒级时间戳"
-                className={`w-full bg-slate-900/50 border rounded-lg px-4 py-3 text-base font-mono text-slate-200 focus:outline-none transition-all input-glow ${
+                className={`w-full th-input rounded-lg px-4 py-3 text-base font-mono transition-all ${
                   tsValidity === 'invalid' ? 'border-red-500/50' :
-                  tsValidity !== 'empty' ? 'border-green-500/30' : 'border-slate-700'
+                  tsValidity !== 'empty' ? 'border-green-500/30' : ''
                 }`}
               />
             </div>
@@ -571,7 +575,8 @@ const TimestampConverter: React.FC = () => {
             <div className="flex justify-center">
               <button
                 onClick={handleSwap}
-                className="px-3 py-1.5 text-slate-500 hover:text-indigo-300 hover:bg-indigo-500/10 rounded-lg transition-all text-sm"
+                className="px-3 py-1.5 rounded-lg transition-all text-sm"
+                style={{ color: 'var(--fg-faint)' }}
                 title="交换时间戳和日期"
               >
                 ↕ 交换
@@ -581,7 +586,7 @@ const TimestampConverter: React.FC = () => {
             {/* Datetime input */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-sm text-slate-300 font-medium">日期时间</label>
+                <label className="text-sm font-medium" style={{ color: 'var(--fg-secondary)' }}>日期时间</label>
                 <ValidityBadge validity={dtValidity} />
               </div>
               <input
@@ -589,9 +594,9 @@ const TimestampConverter: React.FC = () => {
                 value={datetime}
                 onChange={(e) => handleDatetimeChange(e.target.value)}
                 placeholder="YYYY-MM-DD HH:mm:ss"
-                className={`w-full bg-slate-900/50 border rounded-lg px-4 py-3 text-base font-mono text-slate-200 focus:outline-none transition-all input-glow ${
+                className={`w-full th-input rounded-lg px-4 py-3 text-base font-mono transition-all ${
                   dtValidity === 'invalid' ? 'border-red-500/50' :
-                  dtValidity === 'valid' ? 'border-green-500/30' : 'border-slate-700'
+                  dtValidity === 'valid' ? 'border-green-500/30' : ''
                 }`}
               />
             </div>
@@ -600,33 +605,33 @@ const TimestampConverter: React.FC = () => {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={loadCurrentTime}
-                className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all text-sm font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
+                className="th-btn-accent px-6 py-2.5 rounded-lg transition-all text-sm font-semibold shadow-lg"
               >
                 当前时间
               </button>
               <button
                 onClick={() => { if (timestamp) convertTimestamp(timestamp); else if (datetime) convertDatetime(datetime) }}
-                className="px-4 py-2.5 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50 hover:border-slate-500 hover:text-white transition-all text-sm font-medium"
+                className="th-btn-ghost px-4 py-2.5 rounded-lg transition-all text-sm font-medium"
               >
                 转换
               </button>
             </div>
 
             {/* Shortcut hints */}
-            <div className="flex gap-4 text-xs text-slate-600 flex-wrap">
-              <span><kbd className="px-1 py-0.5 bg-slate-800 rounded text-slate-500">Ctrl</kbd>+<kbd className="px-1 py-0.5 bg-slate-800 rounded text-slate-500">Enter</kbd> 转换</span>
-              <span><kbd className="px-1 py-0.5 bg-slate-800 rounded text-slate-500">Esc</kbd> 清空</span>
+            <div className="flex gap-4 text-xs flex-wrap" style={{ color: 'var(--fg-faint)' }}>
+              <span><kbd className="px-1 py-0.5 rounded" style={{ backgroundColor: 'color-mix(in srgb, var(--bg-card) 80%, transparent)', color: 'var(--fg-faint)' }}>Ctrl</kbd>+<kbd className="px-1 py-0.5 rounded" style={{ backgroundColor: 'color-mix(in srgb, var(--bg-card) 80%, transparent)', color: 'var(--fg-faint)' }}>Enter</kbd> 转换</span>
+              <span><kbd className="px-1 py-0.5 rounded" style={{ backgroundColor: 'color-mix(in srgb, var(--bg-card) 80%, transparent)', color: 'var(--fg-faint)' }}>Esc</kbd> 清空</span>
             </div>
 
             {/* Quick shortcuts */}
-            <div className="space-y-2 pt-2 border-t border-slate-700/50">
-              <span className="text-xs text-slate-500">快捷时间:</span>
+            <div className="space-y-2 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
+              <span className="text-xs" style={{ color: 'var(--fg-faint)' }}>快捷时间:</span>
               <div className="flex flex-wrap gap-2">
                 {SHORTCUTS.map((sc, i) => (
                   <button
                     key={i}
                     onClick={() => handleTimestampChange(sc.compute().toString())}
-                    className="px-2.5 py-1 bg-slate-800/60 hover:bg-purple-500/20 rounded-md text-xs text-slate-400 hover:text-purple-300 transition-all border border-slate-700/50 hover:border-purple-500/30"
+                    className="th-tag px-2.5 py-1 rounded-md text-xs transition-all"
                   >
                     {sc.label}
                   </button>
@@ -636,14 +641,14 @@ const TimestampConverter: React.FC = () => {
 
             {/* History */}
             {history.length > 0 && (
-              <div className="space-y-2 pt-2 border-t border-slate-700/50">
-                <span className="text-xs text-slate-500">最近输入:</span>
+              <div className="space-y-2 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
+                <span className="text-xs" style={{ color: 'var(--fg-faint)' }}>最近输入:</span>
                 <div className="flex flex-wrap gap-2">
                   {history.map((h, i) => (
                     <button
                       key={i}
                       onClick={() => h.type === 'timestamp' ? handleTimestampChange(h.value) : handleDatetimeChange(h.value)}
-                      className="px-2.5 py-1 bg-slate-800/60 hover:bg-slate-700/60 rounded-md text-xs text-slate-400 hover:text-slate-300 transition-all font-mono truncate max-w-[160px]"
+                      className="th-tag px-2.5 py-1 rounded-md text-xs transition-all font-mono truncate max-w-[160px]"
                       title={h.value}
                     >
                       {h.value}
@@ -654,13 +659,13 @@ const TimestampConverter: React.FC = () => {
             )}
 
             {/* Timezone */}
-            <div className="space-y-3 pt-2 border-t border-slate-700/50">
+            <div className="space-y-3 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
               <div className="flex items-center justify-between">
-                <label className="text-sm text-slate-300 font-medium">时区</label>
+                <label className="text-sm font-medium" style={{ color: 'var(--fg-secondary)' }}>时区</label>
                 <select
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
-                  className="bg-slate-800 text-white px-2 py-1 rounded text-sm border border-slate-600 focus:outline-none focus:border-indigo-500 max-w-[220px]"
+                  className="th-select px-2 py-1 rounded text-sm max-w-[220px]"
                 >
                   {TIMEZONE_GROUPS.map(group => (
                     <optgroup key={group.label} label={group.label}>
@@ -678,8 +683,8 @@ const TimestampConverter: React.FC = () => {
                     onClick={() => setTimezone(tz.value)}
                     className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
                       timezone === tz.value
-                        ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/25'
-                        : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 hover:text-slate-300'
+                        ? 'th-btn-accent shadow-md'
+                        : 'th-btn-ghost'
                     }`}
                   >
                     {tz.label}
@@ -692,7 +697,7 @@ const TimestampConverter: React.FC = () => {
           {/* ===== Result Panel ===== */}
           <div className="glass rounded-xl p-5 space-y-4 flex flex-col">
             <div className="flex items-center justify-between">
-              <label className="text-lg font-semibold text-white">转换结果</label>
+              <label className="text-lg font-semibold" style={{ color: 'var(--fg)' }}>转换结果</label>
               {result && (
                 <button
                   onClick={() => {
@@ -708,10 +713,10 @@ const TimestampConverter: React.FC = () => {
                     ].join('\n')
                     handleCopy(all, 'all', '全部信息')
                   }}
-                  className={`px-3 py-1 rounded text-sm transition-all border ${
+                  className={`px-3 py-1 text-sm transition-all ${
                     copiedField === 'all'
-                      ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                      : 'bg-white/10 text-white border-transparent hover:bg-white/20'
+                      ? 'bg-green-500/20 text-green-400 border border-green-500/30 rounded'
+                      : 'th-btn-ghost'
                   }`}
                 >
                   {copiedField === 'all' ? '已复制' : '复制全部'}
@@ -720,19 +725,19 @@ const TimestampConverter: React.FC = () => {
             </div>
 
             {error ? (
-              <div className="p-4 rounded-lg text-sm border bg-red-500/10 border-red-500/30 text-red-400 flex items-center gap-2">
+              <div className="th-panel-error p-4 rounded-lg text-sm flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0" />
                 {error}
               </div>
             ) : result ? (
               <div className="space-y-4 flex-1">
                 {/* Primary display */}
-                <div className="text-center py-6 px-4 rounded-xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20">
-                  <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">{timezone}</div>
-                  <div className="text-2xl md:text-3xl font-mono text-white font-bold tracking-wide">
+                <div className="text-center py-6 px-4 rounded-xl" style={{ background: 'linear-gradient(to bottom right, color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--accent) 5%, transparent))', border: '1px solid color-mix(in srgb, var(--accent) 20%, transparent)' }}>
+                  <div className="text-xs uppercase tracking-wider mb-2" style={{ color: 'var(--fg-faint)' }}>{timezone}</div>
+                  <div className="text-2xl md:text-3xl font-mono font-bold tracking-wide" style={{ color: 'var(--fg)' }}>
                     {result.formatted}
                   </div>
-                  <div className="mt-2 text-sm text-indigo-300/80 font-medium">
+                  <div className="mt-2 text-sm font-medium" style={{ color: 'var(--accent)', opacity: 0.8 }}>
                     {result.relative} · {result.dayOfWeek}
                   </div>
                 </div>
@@ -749,7 +754,7 @@ const TimestampConverter: React.FC = () => {
               </div>
             ) : (
               <div className="flex-1 flex items-center justify-center min-h-[200px]">
-                <div className="text-center text-slate-600">
+                <div className="text-center" style={{ color: 'var(--fg-faint)' }}>
                   <div className="text-4xl mb-3 opacity-40">&#9201;</div>
                   <div className="text-sm">输入时间戳或日期开始转换</div>
                 </div>
@@ -758,20 +763,20 @@ const TimestampConverter: React.FC = () => {
 
             {/* Timestamp Calculator */}
             {result && (
-              <div className="space-y-3 pt-3 border-t border-slate-700/50">
-                <label className="text-sm text-slate-400 font-medium">时间计算器</label>
+              <div className="space-y-3 pt-3" style={{ borderTop: '1px solid var(--border)' }}>
+                <label className="text-sm font-medium" style={{ color: 'var(--fg-muted)' }}>时间计算器</label>
                 <div className="flex gap-2 items-center">
                   <input
                     type="text"
                     value={calcOffset}
                     onChange={e => { setCalcOffset(e.target.value); setCalcError('') }}
                     placeholder="+3h, -2d, +30m, +1M"
-                    className="flex-1 bg-slate-900/50 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-slate-200 focus:outline-none focus:border-indigo-500 transition-all"
+                    className="flex-1 th-input rounded-lg px-3 py-2 text-sm font-mono transition-all"
                     onKeyDown={e => { if (e.key === 'Enter') handleCalcOffset() }}
                   />
                   <button
                     onClick={handleCalcOffset}
-                    className="px-4 py-2 bg-indigo-500/20 text-indigo-300 rounded-lg hover:bg-indigo-500/30 text-sm font-medium transition-colors border border-indigo-500/30"
+                    className="th-btn-soft px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                   >
                     计算
                   </button>
@@ -781,7 +786,7 @@ const TimestampConverter: React.FC = () => {
                     <button
                       key={offset}
                       onClick={() => { setCalcOffset(offset); }}
-                      className="px-2 py-1 bg-slate-800/60 hover:bg-indigo-500/20 rounded text-xs text-slate-500 hover:text-indigo-300 transition-all"
+                      className="th-tag px-2 py-1 rounded text-xs transition-all"
                     >
                       {offset}
                     </button>
@@ -792,16 +797,17 @@ const TimestampConverter: React.FC = () => {
                 )}
                 {calcResult && (
                   <div
-                    className="bg-slate-900/50 rounded-lg p-3 border border-slate-800/50 cursor-pointer hover:border-slate-700/50 transition-all"
+                    className="rounded-lg p-3 cursor-pointer transition-all"
+                    style={{ backgroundColor: 'color-mix(in srgb, var(--bg-card) 50%, transparent)', border: '1px solid var(--border)' }}
                     onClick={() => handleCopy(`${calcResult.seconds}`, 'calc', '计算结果时间戳')}
                   >
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-400">计算结果:</span>
-                      <span className="font-mono text-indigo-300">{calcResult.formatted}</span>
+                      <span style={{ color: 'var(--fg-muted)' }}>计算结果:</span>
+                      <span className="font-mono" style={{ color: 'var(--accent)' }}>{calcResult.formatted}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs mt-1">
-                      <span className="text-slate-500">时间戳: {calcResult.seconds}</span>
-                      <span className="text-slate-500">{calcResult.relative}</span>
+                      <span style={{ color: 'var(--fg-faint)' }}>时间戳: {calcResult.seconds}</span>
+                      <span style={{ color: 'var(--fg-faint)' }}>{calcResult.relative}</span>
                     </div>
                   </div>
                 )}
@@ -814,21 +820,21 @@ const TimestampConverter: React.FC = () => {
         <div className="grid grid-cols-1 xl:grid-cols-2 xl:gap-8 gap-4">
           <div className="glass rounded-xl p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <label className="text-lg font-semibold text-white">批量输入</label>
-              <span className="text-xs text-slate-500">每行一个时间戳</span>
+              <label className="text-lg font-semibold" style={{ color: 'var(--fg)' }}>批量输入</label>
+              <span className="text-xs" style={{ color: 'var(--fg-faint)' }}>每行一个时间戳</span>
             </div>
             <textarea
               value={batchInput}
               onChange={e => setBatchInput(e.target.value)}
               placeholder={"每行一个时间戳，例如：\n1704067200\n1735689600\n1703980800000\n2147483647"}
               rows={12}
-              className="w-full h-[28rem] bg-slate-900/50 border border-slate-700 rounded-lg p-4 text-sm font-mono text-slate-200 focus:outline-none focus:border-indigo-500 transition-all resize-y"
+              className="w-full h-[28rem] th-input rounded-lg p-4 text-sm font-mono transition-all resize-y"
               spellCheck={false}
             />
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={processBatch}
-                className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all text-sm font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
+                className="th-btn-accent px-6 py-2.5 rounded-lg transition-all text-sm font-semibold shadow-lg"
               >
                 批量转换
               </button>
@@ -839,28 +845,29 @@ const TimestampConverter: React.FC = () => {
                     handleCopy(text, 'batchAll', '批量结果')
                   }
                 }}
-                className="px-4 py-2.5 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50 hover:border-slate-500 hover:text-white transition-all text-sm font-medium"
+                className="th-btn-ghost px-4 py-2.5 rounded-lg transition-all text-sm font-medium"
               >
                 复制全部结果
               </button>
               <button
                 onClick={() => { setBatchInput(''); setBatchResults([]) }}
-                className="px-4 py-2.5 text-slate-500 rounded-lg hover:text-slate-300 hover:bg-slate-800/40 transition-all text-sm"
+                className="px-4 py-2.5 rounded-lg transition-all text-sm"
+                style={{ color: 'var(--fg-faint)' }}
               >
                 清空
               </button>
             </div>
 
             {/* Timezone for batch */}
-            <div className="flex gap-2 flex-wrap pt-2 border-t border-slate-700/50">
+            <div className="flex gap-2 flex-wrap pt-2" style={{ borderTop: '1px solid var(--border)' }}>
               {QUICK_TIMEZONES.map(tz => (
                 <button
                   key={tz.value}
                   onClick={() => setTimezone(tz.value)}
                   className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
                     timezone === tz.value
-                      ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/25'
-                      : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 hover:text-slate-300'
+                      ? 'th-btn-accent shadow-md'
+                      : 'th-btn-ghost'
                   }`}
                 >
                   {tz.label}
@@ -872,9 +879,9 @@ const TimestampConverter: React.FC = () => {
           {/* Batch Results */}
           <div className="glass rounded-xl p-5 space-y-4 flex flex-col">
             <div className="flex items-center justify-between">
-              <label className="text-lg font-semibold text-white">批量结果</label>
+              <label className="text-lg font-semibold" style={{ color: 'var(--fg)' }}>批量结果</label>
               {batchResults.length > 0 && (
-                <span className="text-xs text-slate-500">
+                <span className="text-xs" style={{ color: 'var(--fg-faint)' }}>
                   {batchResults.filter(r => !r.error).length}/{batchResults.length} 成功
                 </span>
               )}
@@ -893,14 +900,15 @@ const TimestampConverter: React.FC = () => {
                         ? 'bg-red-500/10 border border-red-500/20 text-red-400'
                         : copiedField === `batch-${i}`
                         ? 'bg-green-500/10 border border-green-500/30 cursor-pointer'
-                        : 'bg-slate-900/50 border border-slate-800/50 hover:bg-slate-800/60 cursor-pointer'
+                        : 'cursor-pointer'
                     }`}
+                    style={!r.error && copiedField !== `batch-${i}` ? { backgroundColor: 'color-mix(in srgb, var(--bg-card) 50%, transparent)', border: '1px solid var(--border)' } : undefined}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-xs text-slate-600 w-5 text-right flex-shrink-0">{i + 1}</span>
-                      <span className="font-mono text-slate-400 text-xs truncate">{r.input}</span>
+                      <span className="text-xs w-5 text-right flex-shrink-0" style={{ color: 'var(--fg-faint)' }}>{i + 1}</span>
+                      <span className="font-mono text-xs truncate" style={{ color: 'var(--fg-muted)' }}>{r.input}</span>
                     </div>
-                    <span className={`font-mono flex-shrink-0 ${r.error ? 'text-red-400 text-xs' : 'text-slate-200'}`}>
+                    <span className={`font-mono flex-shrink-0 ${r.error ? 'text-red-400 text-xs' : ''}`} style={!r.error ? { color: 'var(--fg-secondary)' } : undefined}>
                       {r.output || r.error}
                     </span>
                   </div>
@@ -908,7 +916,7 @@ const TimestampConverter: React.FC = () => {
               </div>
             ) : (
               <div className="flex-1 flex items-center justify-center min-h-[200px]">
-                <div className="text-center text-slate-600">
+                <div className="text-center" style={{ color: 'var(--fg-faint)' }}>
                   <div className="text-4xl mb-3 opacity-40">&#128203;</div>
                   <div className="text-sm">批量转换结果将显示在这里</div>
                 </div>

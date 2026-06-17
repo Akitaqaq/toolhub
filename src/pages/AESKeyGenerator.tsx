@@ -76,7 +76,7 @@ const AESKeyGenerator: React.FC = () => {
       {/* 标题 */}
       <div className="text-center space-y-2 mb-8">
         <h2 className="text-3xl md:text-4xl font-bold gradient-text">AES 密钥生成器</h2>
-        <p className="text-slate-400">随机密钥生成，支持 Base64 / Hex 格式</p>
+        <p style={{ color: 'var(--fg-muted)' }}>随机密钥生成，支持 Base64 / Hex 格式</p>
       </div>
 
       {/* 密钥长度选择 */}
@@ -88,8 +88,8 @@ const AESKeyGenerator: React.FC = () => {
               onClick={() => generateKey(size as KeySize)}
               className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all ${
                 keySize === size
-                  ? 'bg-indigo-500 text-white shadow-lg'
-                  : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+                  ? 'th-btn-accent shadow-lg'
+                  : 'th-btn-ghost'
               }`}
             >
               <div className="text-lg font-bold">{size} 位</div>
@@ -105,10 +105,10 @@ const AESKeyGenerator: React.FC = () => {
           {/* Base64 密钥 */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm text-slate-300 font-medium">Base64 密钥</label>
+              <label className="text-sm font-medium" style={{ color: 'var(--fg-secondary)' }}>Base64 密钥</label>
               <button
                 onClick={() => generateKey(keySize)}
-                className="text-xs px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded hover:bg-indigo-500/30 transition-colors"
+                className="th-btn-soft text-xs px-3 py-1 rounded"
               >
                 重新生成
               </button>
@@ -118,11 +118,11 @@ const AESKeyGenerator: React.FC = () => {
                 type="text"
                 value={keyString}
                 readOnly
-                className="flex-1 bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 font-mono text-base text-green-400 focus:outline-none"
+                className="th-input flex-1 rounded-lg px-4 py-3 font-mono text-base"
               />
               <button
                 onClick={() => handleCopy(keyString, '密钥')}
-                className="px-4 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors font-medium"
+                className="th-btn-soft px-4 rounded-lg font-medium"
               >
                 复制
               </button>
@@ -131,17 +131,17 @@ const AESKeyGenerator: React.FC = () => {
 
           {/* Hex 格式 */}
           <div className="space-y-2">
-            <label className="text-sm text-slate-300 font-medium">Hex 格式</label>
+            <label className="text-sm font-medium" style={{ color: 'var(--fg-secondary)' }}>Hex 格式</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={getHexFormat()}
                 readOnly
-                className="flex-1 bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 font-mono text-sm text-yellow-400 focus:outline-none"
+                className="th-input flex-1 rounded-lg px-4 py-3 font-mono text-sm"
               />
               <button
                 onClick={() => handleCopy(getHexFormat(), 'Hex')}
-                className="px-4 bg-yellow-500/20 text-yellow-400 rounded-lg hover:bg-yellow-500/30 transition-colors font-medium"
+                className="th-btn-soft px-4 rounded-lg font-medium"
               >
                 复制
               </button>

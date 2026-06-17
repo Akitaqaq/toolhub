@@ -11,28 +11,31 @@ import JSONPath from './pages/JSONPath'
 import SQLFormatter from './pages/SQLFormatter'
 import CronParser from './pages/CronParser'
 import { ToastProvider, ToastEventBridge } from './components/Toast'
+import { ThemeProvider } from './contexts/ThemeContext'
 
 function App() {
   return (
-    <ToastProvider>
-      <Router>
-        <ToastEventBridge />
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="json" element={<JSONFormatter />} />
-            <Route path="jsonpath" element={<JSONPath />} />
-            <Route path="timestamp" element={<TimestampConverter />} />
-            <Route path="encoder" element={<EncoderDecoder />} />
-            <Route path="aes" element={<AESKeyGenerator />} />
-            <Route path="md5" element={<MD5Encryptor />} />
-            <Route path="sql" element={<SQLFormatter />} />
-            <Route path="cron" element={<CronParser />} />
-            <Route path="theme" element={<ThemeCustomizer />} />
-          </Route>
-        </Routes>
-      </Router>
-    </ToastProvider>
+    <ThemeProvider>
+      <ToastProvider>
+        <Router>
+          <ToastEventBridge />
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="json" element={<JSONFormatter />} />
+              <Route path="jsonpath" element={<JSONPath />} />
+              <Route path="timestamp" element={<TimestampConverter />} />
+              <Route path="encoder" element={<EncoderDecoder />} />
+              <Route path="aes" element={<AESKeyGenerator />} />
+              <Route path="md5" element={<MD5Encryptor />} />
+              <Route path="sql" element={<SQLFormatter />} />
+              <Route path="cron" element={<CronParser />} />
+              <Route path="theme" element={<ThemeCustomizer />} />
+            </Route>
+          </Routes>
+        </Router>
+      </ToastProvider>
+    </ThemeProvider>
   )
 }
 

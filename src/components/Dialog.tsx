@@ -25,17 +25,25 @@ export const CustomDialog: React.FC<CustomDialogProps> = ({
   const getTypeStyles = () => {
     switch (type) {
       case 'success':
-        return { border: 'border-emerald-500', icon: '✅', accent: 'text-emerald-400' }
+        return { borderColor: 'var(--success)', icon: '✅', accentColor: 'var(--success)' }
       case 'error':
-        return { border: 'border-red-500', icon: '❌', accent: 'text-red-400' }
+        return { borderColor: 'var(--error)', icon: '❌', accentColor: 'var(--error)' }
       case 'warning':
-        return { border: 'border-yellow-500', icon: '⚠️', accent: 'text-yellow-400' }
+        return { borderColor: 'var(--warning)', icon: '⚠️', accentColor: 'var(--warning)' }
       default:
-        return { border: 'border-blue-500', icon: 'ℹ️', accent: 'text-blue-400' }
+        return { borderColor: 'var(--info)', icon: 'ℹ️', accentColor: 'var(--info)' }
     }
   }
 
   const styles = getTypeStyles()
+
+  const getConfirmBg = () => {
+    switch (type) {
+      case 'error': return 'var(--error)'
+      case 'success': return 'var(--success)'
+      default: return 'var(--info)'
+    }
+  }
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -63,23 +71,25 @@ export const CustomDialog: React.FC<CustomDialogProps> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className={`
-                w-full max-w-md transform overflow-hidden rounded-2xl
-                bg-slate-900/95 backdrop-blur-xl border ${styles.border}
-                p-6 text-left align-middle shadow-2xl
-                transition-all
-              `}>
+              <Dialog.Panel
+                className="w-full max-w-md transform overflow-hidden rounded-2xl backdrop-blur-xl p-6 text-left align-middle shadow-2xl transition-all"
+                style={{
+                  background: 'var(--surface)',
+                  border: `1px solid ${styles.borderColor}`,
+                }}
+              >
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">{styles.icon}</span>
                   <div className="flex-1">
                     <Dialog.Title
                       as="h3"
-                      className={`text-lg font-bold leading-6 ${styles.accent}`}
+                      className="text-lg font-bold leading-6"
+                      style={{ color: styles.accentColor }}
                     >
                       {title}
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-slate-300 whitespace-pre-wrap">
+                      <p className="text-sm whitespace-pre-wrap" style={{ color: 'var(--fg-secondary)' }}>
                         {message}
                       </p>
                     </div>
@@ -91,7 +101,7 @@ export const CustomDialog: React.FC<CustomDialogProps> = ({
                     <button
                       type="button"
                       onClick={onClose}
-                      className="px-4 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 text-slate-200 transition-colors"
+                      className="th-btn-ghost px-4 py-2 text-sm"
                     >
                       取消
                     </button>
@@ -103,15 +113,8 @@ export const CustomDialog: React.FC<CustomDialogProps> = ({
                         onConfirm()
                         onClose()
                       }}
-                      className={`
-                        px-4 py-2 rounded-lg font-medium transition-colors
-                        ${type === 'error'
-                          ? 'bg-red-500 hover:bg-red-600 text-white'
-                          : type === 'success'
-                          ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
-                          : 'bg-blue-500 hover:bg-blue-600 text-white'
-                        }
-                      `}
+                      className="px-4 py-2 rounded-lg font-medium transition-colors"
+                      style={{ background: getConfirmBg(), color: '#fff' }}
                     >
                       {confirmText}
                     </button>

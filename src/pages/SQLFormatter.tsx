@@ -92,18 +92,18 @@ const SQLFormatter: React.FC = () => {
     <div className="max-w-6xl mx-auto space-y-6 animate-fade-in">
       <div className="text-center space-y-2 mb-6">
         <h2 className="text-3xl md:text-4xl font-bold gradient-text">SQL格式化工具</h2>
-        <p className="text-slate-400">支持SQL美化、压缩和多数据库方言</p>
+        <p style={{ color: 'var(--fg-muted)' }}>支持SQL美化、压缩和多数据库方言</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-4">
         {/* 输入区域 */}
         <div className="glass rounded-xl p-4 space-y-3 h-fit">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <label className="text-lg font-semibold text-white">输入SQL</label>
+            <label className="th-section-header">输入SQL</label>
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleClear}
-                className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 text-sm transition-colors"
+                className="th-btn-danger px-3 py-1 rounded text-sm transition-colors"
               >
                 清空
               </button>
@@ -115,7 +115,7 @@ const SQLFormatter: React.FC = () => {
             <select
               value={state.language}
               onChange={(e) => setLanguage(e.target.value as SQLState['language'])}
-              className="bg-slate-800 text-white px-2 py-1 rounded text-sm border border-slate-600 focus:outline-none focus:border-indigo-500"
+              className="th-select px-2 py-1 rounded text-sm"
             >
               <option value="sql">标准SQL</option>
               <option value="mysql">MySQL</option>
@@ -127,7 +127,7 @@ const SQLFormatter: React.FC = () => {
             <select
               value={state.indent}
               onChange={(e) => setIndent(parseInt(e.target.value) as SQLState['indent'])}
-              className="bg-slate-800 text-white px-2 py-1 rounded text-sm border border-slate-600 focus:outline-none focus:border-indigo-500"
+              className="th-select px-2 py-1 rounded text-sm"
             >
               <option value="2">2空格</option>
               <option value="4">4空格</option>
@@ -136,7 +136,7 @@ const SQLFormatter: React.FC = () => {
             <select
               value={state.keywordCase}
               onChange={(e) => setKeywordCase(e.target.value as SQLState['keywordCase'])}
-              className="bg-slate-800 text-white px-2 py-1 rounded text-sm border border-slate-600 focus:outline-none focus:border-indigo-500"
+              className="th-select px-2 py-1 rounded text-sm"
             >
               <option value="upper">关键字大写</option>
               <option value="lower">关键字小写</option>
@@ -148,7 +148,7 @@ const SQLFormatter: React.FC = () => {
             value={state.input}
             onChange={(e) => setState(prev => ({ ...prev, input: e.target.value }))}
             placeholder="在此粘贴SQL语句..."
-            className="w-full h-[22rem] lg:h-[30rem] bg-slate-900/50 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-200 focus:outline-none input-glow transition-all"
+            className="th-input w-full h-[22rem] lg:h-[30rem] rounded-lg p-3 text-sm font-mono transition-all"
             spellCheck={false}
           />
 
@@ -156,13 +156,13 @@ const SQLFormatter: React.FC = () => {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={handleFormat}
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all text-sm font-medium"
+              className="th-btn-accent px-4 py-2 rounded-lg transition-all text-sm font-medium"
             >
               格式化
             </button>
             <button
               onClick={handleMinify}
-              className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg hover:from-purple-600 hover:to-pink-700 transition-all text-sm font-medium"
+              className="th-btn-soft px-4 py-2 rounded-lg transition-all text-sm font-medium"
             >
               压缩
             </button>
@@ -172,11 +172,11 @@ const SQLFormatter: React.FC = () => {
         {/* 输出区域 */}
         <div className="glass rounded-xl p-4 space-y-3 flex flex-col">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <label className="text-lg font-semibold text-white">输出结果</label>
+            <label className="th-section-header">输出结果</label>
             {state.output && (
               <button
                 onClick={() => handleCopy(state.output)}
-                className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20 text-sm transition-colors"
+                className="th-btn-ghost px-3 py-1 rounded text-sm transition-colors"
               >
                 复制
               </button>
@@ -186,7 +186,7 @@ const SQLFormatter: React.FC = () => {
           {state.error && (
             <div className={`p-3 rounded-lg text-sm border ${
               state.error.startsWith('❌')
-                ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                ? 'th-panel-error'
                 : 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
             }`}>
               {state.error}
@@ -197,7 +197,7 @@ const SQLFormatter: React.FC = () => {
             {state.output ? (
               <SQLSyntaxHighlight sql={state.output} className="h-full" />
             ) : (
-              <div className="text-slate-500 text-sm opacity-60">格式化后的结果将显示在这里...</div>
+              <div className="text-sm opacity-60" style={{ color: 'var(--fg-faint)' }}>格式化后的结果将显示在这里...</div>
             )}
           </div>
         </div>
@@ -205,7 +205,7 @@ const SQLFormatter: React.FC = () => {
 
       {/* 示例数据 */}
       <div className="glass rounded-xl p-4">
-        <h3 className="text-sm font-semibold text-slate-300 mb-2">示例SQL数据</h3>
+        <h3 className="th-section-header mb-2">示例SQL数据</h3>
         <div className="flex flex-wrap gap-2">
           {[
             'SELECT u.id, u.name, u.email FROM users u WHERE u.status = "active" AND u.created_at > "2024-01-01" ORDER BY u.created_at DESC LIMIT 10',
@@ -216,7 +216,7 @@ const SQLFormatter: React.FC = () => {
             <button
               key={index}
               onClick={() => setState(prev => ({ ...prev, input: sample, error: '', output: '' }))}
-              className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 rounded text-xs text-slate-300 transition-colors border border-slate-600/50"
+              className="th-tag px-3 py-1.5 rounded text-xs transition-colors"
             >
               {['查询示例', '联表查询', '插入示例', '更新示例'][index]}
             </button>

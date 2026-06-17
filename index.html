@@ -6,30 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ToolHub - 多功能工具集合网站</title>
     <meta name="description" content="ToolHub - 一站式在线工具集合，包含JSON格式化、时间戳转换、编码解码等实用工具" />
-    <!-- 立即应用基础样式，防止空白 -->
+    <!-- 立即应用主题，防止闪烁 -->
     <style>
-      body { margin: 0; background: #0f172a; color: #f8fafc; font-family: system-ui; padding: 20px; }
+      body { margin: 0; font-family: system-ui; padding: 20px; }
       #root { min-height: 100vh; }
       .loading { text-align: center; padding: 60px 20px; opacity: 0.6; }
+      /* Default light theme base */
+      :root { background: #ffffff; color: #0a0a0a; }
+      [data-theme="dark"] { background: #0f172a; color: #f8fafc; }
     </style>
-    <!-- 立即加载保存的主题，防止闪烁 -->
     <script>
       (function() {
         try {
-          const saved = localStorage.getItem('toolhub-theme')
-          if (saved) {
-            const colors = JSON.parse(saved)
-            const root = document.documentElement
-            root.style.setProperty('--gradient-primary', 'linear-gradient(135deg, ' + colors.primaryStart + ' 0%, ' + colors.primaryEnd + ' 100%)')
-            root.style.setProperty('--gradient-secondary', 'linear-gradient(135deg, ' + colors.secondaryStart + ' 0%, ' + colors.secondaryEnd + ' 100%)')
-            root.style.setProperty('--gradient-accent', 'linear-gradient(135deg, ' + colors.accentStart + ' 0%, ' + colors.accentEnd + ' 100%)')
-            root.style.setProperty('--bg-color-1', colors.bgColor1)
-            root.style.setProperty('--bg-color-2', colors.bgColor2)
-            root.style.setProperty('--bg-color-3', colors.bgColor3)
-          }
-        } catch (e) {
-          console.error('Failed to load theme:', e)
-        }
+          var saved = localStorage.getItem('toolhub-color-mode')
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          var theme = saved || (prefersDark ? 'dark' : 'light')
+          document.documentElement.setAttribute('data-theme', theme)
+        } catch (e) {}
       })()
     </script>
   </head>

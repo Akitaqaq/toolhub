@@ -22,10 +22,10 @@ export const ToolCard: React.FC<ToolCardProps> = ({ path, title, description, ic
           {icon}
         </div>
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-          <p className="text-slate-400 text-sm">{description}</p>
+          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--fg)' }}>{title}</h3>
+          <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>{description}</p>
         </div>
-        <div className="text-slate-500 text-xl">→</div>
+        <div className="text-xl" style={{ color: 'var(--fg-faint)' }}>→</div>
       </div>
     </Link>
   )
@@ -49,7 +49,8 @@ export const GradientButton: React.FC<{
     <button
       type={type}
       onClick={onClick}
-      className={`px-4 py-2 text-white rounded-lg transition-all font-medium ${gradients[variant]} ${className}`}
+      className={`px-4 py-2 rounded-lg transition-all font-medium ${gradients[variant]} ${className}`}
+      style={{ color: 'var(--accent-fg)' }}
     >
       {children}
     </button>
@@ -71,7 +72,7 @@ export const Input: React.FC<{
   multiline?: boolean
   className?: string
 }> = ({ value, onChange, placeholder, multiline = false, className = '' }) => {
-  const baseClass = "w-full bg-slate-900/50 border border-slate-700 text-white px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+  const baseClass = "w-full th-input px-3 py-2 rounded-lg"
 
   return multiline ? (
     <textarea

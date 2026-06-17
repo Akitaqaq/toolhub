@@ -37,11 +37,11 @@ const SQLSyntaxHighlight: React.FC<SQLSyntaxHighlightProps> = ({ sql, className 
       let inMultiLineComment = false
       let i = 0
 
-      const flushText = (end: number, keySuffix: string, className?: string) => {
+      const flushText = (end: number, keySuffix: string, className?: string, style?: React.CSSProperties) => {
         if (lastIndex < end) {
           const text = line.slice(lastIndex, end)
           parts.push(
-            <span key={`${keySuffix}-${lineIndex}-${lastIndex}`} className={className}>
+            <span key={`${keySuffix}-${lineIndex}-${lastIndex}`} className={className} style={style}>
               {text}
             </span>
           )
@@ -53,7 +53,7 @@ const SQLSyntaxHighlight: React.FC<SQLSyntaxHighlightProps> = ({ sql, className 
         if (!inString && !inMultiLineComment && line.slice(i, i + 2) === '--') {
           flushText(i, 'pre')
           parts.push(
-            <span key={`comment-${lineIndex}-${i}`} className="text-slate-500 italic">
+            <span key={`comment-${lineIndex}-${i}`} className="italic" style={{ color: 'var(--syn-comment)' }}>
               {line.slice(i)}
             </span>
           )
@@ -75,7 +75,7 @@ const SQLSyntaxHighlight: React.FC<SQLSyntaxHighlightProps> = ({ sql, className 
             i++
           }
           parts.push(
-            <span key={`comment-${lineIndex}-${start}`} className="text-slate-500 italic">
+            <span key={`comment-${lineIndex}-${start}`} className="italic" style={{ color: 'var(--syn-comment)' }}>
               {line.slice(start, i)}
             </span>
           )
@@ -86,7 +86,7 @@ const SQLSyntaxHighlight: React.FC<SQLSyntaxHighlightProps> = ({ sql, className 
 
         if (inMultiLineComment) {
           if (line.slice(i, i + 2) === '*/') {
-            flushText(i + 2, 'comment', 'text-slate-500 italic')
+            flushText(i + 2, 'comment', 'italic', { color: 'var(--syn-comment)' })
             i += 2
             lastIndex = i
             inMultiLineComment = false
@@ -114,7 +114,7 @@ const SQLSyntaxHighlight: React.FC<SQLSyntaxHighlightProps> = ({ sql, className 
             i++
           }
           parts.push(
-            <span key={`string-${lineIndex}-${start}`} className="text-green-400">
+            <span key={`string-${lineIndex}-${start}`} style={{ color: 'var(--syn-string)' }}>
               {line.slice(start, i)}
             </span>
           )
@@ -134,7 +134,7 @@ const SQLSyntaxHighlight: React.FC<SQLSyntaxHighlightProps> = ({ sql, className 
           flushText(i, 'pre')
           const num = numMatch[0]
           parts.push(
-            <span key={`num-${lineIndex}-${i}`} className="text-pink-400">
+            <span key={`num-${lineIndex}-${i}`} style={{ color: 'var(--syn-number)' }}>
               {num}
             </span>
           )
@@ -150,14 +150,14 @@ const SQLSyntaxHighlight: React.FC<SQLSyntaxHighlightProps> = ({ sql, className 
           const word = identMatch[0]
           const nextChar = line[i + word.length]
           const isFunc = nextChar === '('
-          const className = isFunc
-            ? 'text-yellow-300'
+          const style: React.CSSProperties | undefined = isFunc
+            ? { color: 'var(--syn-func)' }
             : isKeyword(word)
-            ? 'text-purple-400 font-semibold'
+            ? { color: 'var(--syn-keyword)', fontWeight: 600 }
             : undefined
 
           parts.push(
-            <span key={`word-${lineIndex}-${i}`} className={className}>
+            <span key={`word-${lineIndex}-${i}`} style={style}>
               {word}
             </span>
           )

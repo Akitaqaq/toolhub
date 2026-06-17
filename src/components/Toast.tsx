@@ -28,18 +28,18 @@ const ToastItem: React.FC<{
     return () => clearTimeout(timer)
   }, [toast.id, toast.duration, onClose])
 
-  const getColors = () => {
+  const getColorStyle = (): React.CSSProperties => {
     switch (toast.type) {
       case 'success':
-        return 'bg-emerald-500 text-white'
+        return { background: 'var(--success)', color: '#fff' }
       case 'error':
-        return 'bg-red-500 text-white'
+        return { background: 'var(--error)', color: '#fff' }
       case 'warning':
-        return 'bg-yellow-500 text-white'
+        return { background: 'var(--warning)', color: '#fff' }
       case 'info':
-        return 'bg-blue-500 text-white'
+        return { background: 'var(--info)', color: '#fff' }
       default:
-        return 'bg-slate-700 text-white'
+        return { background: 'var(--surface-active)', color: 'var(--fg)' }
     }
   }
 
@@ -54,13 +54,10 @@ const ToastItem: React.FC<{
   }
 
   return (
-    <div className={`
-      ${getColors()}
-      px-4 py-3 rounded-lg shadow-lg
-      flex items-center gap-3 min-w-[280px] max-w-[400px]
-      animate-slide-up backdrop-blur-sm
-      border border-white/20
-    `}>
+    <div
+      className="px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 min-w-[280px] max-w-[400px] animate-slide-up backdrop-blur-sm"
+      style={{ ...getColorStyle(), border: '1px solid rgba(255,255,255,0.2)' }}
+    >
       <span className="text-xl">{getIcon()}</span>
       <span className="flex-1 text-sm font-medium">{toast.message}</span>
       <button
