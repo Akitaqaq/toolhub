@@ -12,6 +12,7 @@ const Home: React.FC = () => {
     { path: '/sql', title: 'SQL 格式化', desc: 'SQL 美化、压缩，支持 MySQL / PostgreSQL / BigQuery 等方言', icon: '▤' },
     { path: '/cron', title: 'Cron 解析', desc: '解析 Cron 表达式，生成可读描述和未来执行时间', icon: '⏳' },
     { path: '/theme', title: '主题设置', desc: '自定义网站配色方案，支持浅色/深色模式切换', icon: '◐' },
+    { path: '/image', title: '图片压缩', desc: '在浏览器本地压缩图片，支持 JPEG/PNG/WebP，可调节质量和尺寸', icon: '🖼' },
   ]
 
   return (
@@ -77,7 +78,7 @@ const Home: React.FC = () => {
 
         <div className="flex flex-wrap gap-6 text-sm" style={{ color: 'var(--fg-muted)' }}>
           <span><strong style={{ color: 'var(--fg)', fontWeight: 600 }}>100%</strong> 本地处理</span>
-          <span><strong style={{ color: 'var(--fg)', fontWeight: 600 }}>9+</strong> 实用工具</span>
+          <span><strong style={{ color: 'var(--fg)', fontWeight: 600 }}>10+</strong> 实用工具</span>
           <span><strong style={{ color: 'var(--fg)', fontWeight: 600 }}>免费</strong> 无限使用</span>
         </div>
       </section>
